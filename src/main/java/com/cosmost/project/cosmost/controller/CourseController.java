@@ -23,7 +23,7 @@ public class CourseController {
     // 코스 등록
     @PostMapping("/cosmosts")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createLocationCategory(@Valid @RequestBody CreateCourseRequest createCourseRequest) {
+    public ResponseEntity<?> createCourse(@Valid @RequestBody CreateCourseRequest createCourseRequest) {
         cosmostsService.createCourse(createCourseRequest);
 
         return ResponseEntity.ok("코스가 추가되었습니다.");
