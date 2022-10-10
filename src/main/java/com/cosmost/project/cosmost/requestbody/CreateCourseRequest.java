@@ -32,7 +32,7 @@ public class CreateCourseRequest {
                 .authorId(createCourseRequest.getAuthorId())
                 .courseTitle(createCourseRequest.getCourseTitle())
                 .courseComment(createCourseRequest.getCourseComment())
-                .courseStstus(courseStstus)
+                .courseStstus(CourseStatus.ACTIVE)
                 .build();
     }
 }
