@@ -15,7 +15,6 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class CreateCourseRequest {
 
-    @NotBlank(message = "작성자 PK는 필수 입력 값입니다.")
     private Long authorId;
 
     @NotBlank(message = "코스 제목은 필수 입력 값입니다.")
@@ -24,7 +23,6 @@ public class CreateCourseRequest {
     @NotBlank(message = "코스 후기는 필수 입력 값입니다.")
     private String courseComment;
 
-    @NotBlank(message = "코스 상태는 필수 입력 값입니다.")
     private CourseStatus courseStstus;
 
     public CourseEntity createDtoToEntity(CreateCourseRequest createCourseRequest) {
