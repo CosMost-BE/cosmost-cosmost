@@ -1,4 +1,4 @@
 package com.cosmost.project.cosmost.service;
 
-public class CosmostsServiceImpl implements CosmostsFindService, CosmostsOperationService {
+public class CosmostsServiceImpl implements CosmostsService {
 }

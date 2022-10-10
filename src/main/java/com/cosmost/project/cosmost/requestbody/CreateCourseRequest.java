@@ -1,5 +1,7 @@
 package com.cosmost.project.cosmost.requestbody;
 
+import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
+import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,5 +25,15 @@ public class CreateCourseRequest {
     private String courseComment;
 
     @NotBlank(message = "코스 상태는 필수 입력 값입니다.")
-    private boolean courseStstus;
+    private CourseStatus courseStstus;
+
+    public CourseEntity createDtoToEntity(CreateCourseRequest createCourseRequest) {
+        return CourseEntity.builder()
+                .authorId(createCourseRequest.getAuthorId())
+                .courseTitle(createCourseRequest.getCourseTitle())
+                .courseComment(createCourseRequest.getCourseComment())
+                .courseStstus(courseStstus)
+                .build();
+    }
 }
+

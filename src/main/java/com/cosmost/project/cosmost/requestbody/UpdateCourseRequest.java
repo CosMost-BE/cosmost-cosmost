@@ -1,5 +1,6 @@
 package com.cosmost.project.cosmost.requestbody;
 
+import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,5 +27,5 @@ public class UpdateCourseRequest {
     private String courseComment;
 
     @NotBlank(message = "코스 상태는 필수 입력 값입니다.")
-    private boolean courseStstus;
+    private CourseStatus courseStstus;
 }

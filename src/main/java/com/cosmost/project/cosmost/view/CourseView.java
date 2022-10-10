@@ -1,5 +1,6 @@
 package com.cosmost.project.cosmost.view;
 
+import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
 import com.cosmost.project.cosmost.model.Course;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -14,13 +15,13 @@ public class CourseView {
     private Long authorId;
     private String courseTitle;
     private String courseComment;
-    private boolean courseStstus;
+    private CourseStatus courseStstus;
 
     public CourseView(Course course) {
         this.id = course.getId();
         this.authorId = course.getAuthorId();
         this.courseTitle = course.getCourseTitle();
         this.courseComment = course.getCourseComment();
-        this.courseStstus = course.isCourseStstus();
+        this.courseStstus = course.getCourseStstus();
     }
 }
