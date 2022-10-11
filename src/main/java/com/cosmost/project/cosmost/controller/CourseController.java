@@ -38,7 +38,7 @@ public class CourseController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> updateCourse(@PathVariable Long id,
                                           @Valid @RequestBody UpdateCourseRequest updateCourseRequest) {
-        cosmostsService.updateCourse(updateCourseRequest);
+        cosmostsService.updateCourse(id,updateCourseRequest);
 
         return ResponseEntity.ok("코스가 수정되었습니다.");
     }

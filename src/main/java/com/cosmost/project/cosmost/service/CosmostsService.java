@@ -6,10 +6,11 @@ import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CosmostsService {
     CourseEntity createCourse(CreateCourseRequest createCourseRequest);
-    CourseEntity updateCourse(UpdateCourseRequest updateCourseRequest);
+    Optional<CourseEntity> updateCourse(Long id, UpdateCourseRequest updateCourseRequest);
 
 
 }

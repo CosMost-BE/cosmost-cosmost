@@ -26,9 +26,9 @@ public class UpdateCourseRequest {
 
     private CourseStatus courseStatus;
 
-    public CourseEntity updateDtoToEntity(UpdateCourseRequest updateCourseRequest) {
+    public CourseEntity updateDtoToEntity(Long id, UpdateCourseRequest updateCourseRequest) {
         return CourseEntity.builder()
-                .id(updateCourseRequest.getId())
+                .id(id)
                 .authorId(updateCourseRequest.getAuthorId())
                 .courseTitle(updateCourseRequest.getCourseTitle())
                 .courseComment(updateCourseRequest.getCourseComment())

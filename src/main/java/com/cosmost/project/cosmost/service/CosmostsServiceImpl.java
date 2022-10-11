@@ -1,5 +1,6 @@
 package com.cosmost.project.cosmost.service;
 
+import com.cosmost.project.cosmost.exception.CourseIdNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityRepository;
 import com.cosmost.project.cosmost.model.Course;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,11 +35,21 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     // 코스 수정
     @Override
-    public CourseEntity updateCourse(UpdateCourseRequest updateCourseRequest) {
-        CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(updateCourseRequest);
-        courseEntityRepository.save(courseEntity);
+    public Optional<CourseEntity> updateCourse(Long id, UpdateCourseRequest updateCourseRequest) {
 
-        return courseEntity;
+        Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
+                courseEntityRepository.findById(id).orElseThrow(
+                        CourseIdNotfound::new));
+
+        if(courseEntityCheck.isPresent()) {
+            CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(id, updateCourseRequest);
+            courseEntityRepository.save(courseEntity);
+
+            return courseEntityCheck;
+        }
+
+        return null;
     }
+
 
 }
