@@ -26,6 +26,7 @@ public class UpdateCourseRequest {
 
     @NotBlank(message = "코스 상태는 필수 입력 값입니다.")
     private CourseStatus courseStatus;
+
     public CourseEntity updateDtoToEntity(UpdateCourseRequest updateCourseRequest) {
         return CourseEntity.builder()
                 .id(updateCourseRequest.getId())

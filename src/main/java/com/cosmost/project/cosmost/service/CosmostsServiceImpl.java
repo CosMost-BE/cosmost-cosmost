@@ -4,6 +4,7 @@ import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityRepository;
 import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
+import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,14 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Override
     public CourseEntity createCourse(CreateCourseRequest createCourseRequest) {
         CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest);
+        courseEntityRepository.save(courseEntity);
+
+        return courseEntity;
+    }
+
+    @Override
+    public CourseEntity updateCourse(UpdateCourseRequest updateCourseRequest) {
+        CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(updateCourseRequest);
         courseEntityRepository.save(courseEntity);
 
         return courseEntity;
