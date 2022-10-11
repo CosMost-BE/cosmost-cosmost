@@ -1,0 +1,12 @@
+cloud:
+  aws:
+    s3:
+      bucket: cosmost
+    credentials:
+      access-key: AKIAVBWAXVAT6QWHAFZY
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
