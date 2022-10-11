@@ -1,6 +1,7 @@
 package com.cosmost.project.cosmost.controller;
 
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
+import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import com.cosmost.project.cosmost.service.CosmostsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,16 @@ public class CourseController {
         cosmostsService.createCourse(createCourseRequest);
 
         return ResponseEntity.ok("코스가 추가되었습니다.");
+    }
+
+    // 코스 수정
+    @PutMapping("/cosmosts/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> updateCourse(@PathVariable Long id,
+                                          @Valid @RequestBody UpdateCourseRequest updateCourseRequest) {
+        cosmostsService.updateCourse(updateCourseRequest);
+
+        return ResponseEntity.ok("코스가 수정되었습니다.");
     }
 
 }

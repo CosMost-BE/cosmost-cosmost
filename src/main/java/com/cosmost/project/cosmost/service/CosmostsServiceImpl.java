@@ -31,6 +31,7 @@ public class CosmostsServiceImpl implements CosmostsService {
         return courseEntity;
     }
 
+    // 코스 수정
     @Override
     public CourseEntity updateCourse(UpdateCourseRequest updateCourseRequest) {
         CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(updateCourseRequest);

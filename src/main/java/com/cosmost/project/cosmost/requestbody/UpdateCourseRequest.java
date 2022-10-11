@@ -24,7 +24,6 @@ public class UpdateCourseRequest {
     @NotBlank(message = "코스 후기는 필수 입력 값입니다.")
     private String courseComment;
 
-    @NotBlank(message = "코스 상태는 필수 입력 값입니다.")
     private CourseStatus courseStatus;
 
     public CourseEntity updateDtoToEntity(UpdateCourseRequest updateCourseRequest) {
