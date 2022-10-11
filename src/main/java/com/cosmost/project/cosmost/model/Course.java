@@ -13,5 +13,5 @@ public class Course {
     private Long authorId;
     private String courseTitle;
     private String courseComment;
-    private CourseStatus courseStstus;
+    private CourseStatus CourseStatus;
 }

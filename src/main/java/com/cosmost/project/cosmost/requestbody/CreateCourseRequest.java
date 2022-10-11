@@ -23,14 +23,14 @@ public class CreateCourseRequest {
     @NotBlank(message = "코스 후기는 필수 입력 값입니다.")
     private String courseComment;
 
-    private CourseStatus courseStstus;
+    private CourseStatus courseStatus;
 
     public CourseEntity createDtoToEntity(CreateCourseRequest createCourseRequest) {
         return CourseEntity.builder()
                 .authorId(createCourseRequest.getAuthorId())
                 .courseTitle(createCourseRequest.getCourseTitle())
                 .courseComment(createCourseRequest.getCourseComment())
-                .courseStstus(CourseStatus.ACTIVE)
+                .courseStatus(CourseStatus.ACTIVE)
                 .build();
     }
 }

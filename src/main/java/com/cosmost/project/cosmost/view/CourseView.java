@@ -15,13 +15,13 @@ public class CourseView {
     private Long authorId;
     private String courseTitle;
     private String courseComment;
-    private CourseStatus courseStstus;
+    private CourseStatus courseStatus;
 
     public CourseView(Course course) {
         this.id = course.getId();
         this.authorId = course.getAuthorId();
         this.courseTitle = course.getCourseTitle();
         this.courseComment = course.getCourseComment();
-        this.courseStstus = course.getCourseStstus();
+        this.courseStatus = course.getCourseStatus();
     }
 }

@@ -27,5 +27,5 @@ public class CourseEntity extends BaseTimeEntity{
     private String courseComment;
 
     @Enumerated(EnumType.STRING)
-    private CourseStatus courseStstus;
+    private CourseStatus courseStatus;
 }

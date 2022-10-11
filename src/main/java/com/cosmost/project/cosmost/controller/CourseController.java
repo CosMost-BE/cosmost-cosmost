@@ -1,10 +1,9 @@
 package com.cosmost.project.cosmost.controller;
 
-import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.service.CosmostsService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +14,14 @@ import javax.validation.Valid;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/v1")
-@RequiredArgsConstructor
 public class CourseController {
 
     private final CosmostsService cosmostsService;
+
+    @Autowired
+    public CourseController(CosmostsService cosmostsService) {
+        this.cosmostsService = cosmostsService;
+    }
 
     // 코스 등록
     @PostMapping("/cosmosts")

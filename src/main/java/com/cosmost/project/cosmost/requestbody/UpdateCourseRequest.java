@@ -27,5 +27,5 @@ public class UpdateCourseRequest {
     private String courseComment;
 
     @NotBlank(message = "코스 상태는 필수 입력 값입니다.")
-    private CourseStatus courseStstus;
+    private CourseStatus CourseStatus;
 }
