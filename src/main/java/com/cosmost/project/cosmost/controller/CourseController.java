@@ -43,4 +43,6 @@ public class CourseController {
         return ResponseEntity.ok("코스가 수정되었습니다.");
     }
 
+
+
 }
