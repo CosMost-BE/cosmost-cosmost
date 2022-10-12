@@ -9,6 +9,7 @@ import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class CosmostsServiceImpl implements CosmostsService {
     }
 
     // 코스 등록
+    @Transactional
     @Override
     public CourseEntity createCourse(CreateCourseRequest createCourseRequest) {
         CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest);
@@ -34,6 +36,7 @@ public class CosmostsServiceImpl implements CosmostsService {
     }
 
     // 코스 수정
+    @Transactional
     @Override
     public Optional<CourseEntity> updateCourse(Long id, UpdateCourseRequest updateCourseRequest) {
 
@@ -45,6 +48,23 @@ public class CosmostsServiceImpl implements CosmostsService {
             CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(id, updateCourseRequest);
             courseEntityRepository.save(courseEntity);
 
+            return courseEntityCheck;
+        }
+
+        return null;
+    }
+
+    // 코스 삭제
+    @Transactional
+    @Override
+    public Optional<CourseEntity> deleteCourse(Long id) {
+
+        Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
+                courseEntityRepository.findById(id).orElseThrow(
+                        CourseIdNotfound::new));
+
+        if(courseEntityCheck.isPresent()) {
+            courseEntityRepository.deleteById(id);
             return courseEntityCheck;
         }
 

@@ -43,4 +43,13 @@ public class CourseController {
         return ResponseEntity.ok("코스가 수정되었습니다.");
     }
 
+    // 코스 삭제
+    @DeleteMapping("/cosmosts/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
+        cosmostsService.deleteCourse(id);
+
+        return ResponseEntity.ok("코스가 삭제되었습니다.");
+    }
+
 }

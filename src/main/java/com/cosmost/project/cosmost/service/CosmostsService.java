@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface CosmostsService {
     CourseEntity createCourse(CreateCourseRequest createCourseRequest);
     Optional<CourseEntity> updateCourse(Long id, UpdateCourseRequest updateCourseRequest);
+    Optional<CourseEntity> deleteCourse(Long id);
+
 
 
 }
