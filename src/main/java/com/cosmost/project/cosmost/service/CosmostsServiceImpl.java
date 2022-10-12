@@ -6,11 +6,13 @@ import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityReposit
 import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
+import com.cosmost.project.cosmost.view.CourseView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,6 +72,28 @@ public class CosmostsServiceImpl implements CosmostsService {
 
         return null;
     }
+
+    @Override
+    public List<CourseView> readCourseByAuthId(Long authorId) {
+
+        List<Course> courseList = courseEntityRepository.findAllByAuthorId(authorId);
+        List<CourseView> courseViewList = new ArrayList<>();
+
+        courseList.forEach(course -> {
+            courseViewList.add(CourseView.builder()
+                    .id(course.getId())
+                    .authorId(course.getAuthorId())
+                    .courseTitle(course.getCourseTitle())
+                    .courseComment(course.getCourseComment())
+                    .courseStatus(course.getCourseStatus())
+                    .build());
+        });
+
+        return courseViewList;
+    }
+
+
+
 
 
 }
