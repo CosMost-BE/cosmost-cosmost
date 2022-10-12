@@ -24,9 +24,8 @@ public class CourseControllerAdvice {
         BindingResult bindingResult = exception.getBindingResult();
 
         StringBuilder builder = new StringBuilder();
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            builder.append(fieldError.getDefaultMessage());
-        }
+        FieldError fieldError = bindingResult.getFieldError();
+        builder.append(fieldError.getDefaultMessage());
 
         return builder.toString();
     }
