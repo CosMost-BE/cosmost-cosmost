@@ -44,7 +44,7 @@ public class CourseController {
     }
 
     // 코스 삭제
-   @DeleteMapping("/cosmosts/{id}")
+    @DeleteMapping("/cosmosts/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
         cosmostsService.deleteCourse(id);
