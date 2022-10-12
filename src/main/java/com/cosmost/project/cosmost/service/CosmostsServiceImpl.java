@@ -73,6 +73,7 @@ public class CosmostsServiceImpl implements CosmostsService {
         return null;
     }
 
+    // 작성한 코스 목록 조회
     @Override
     public List<CourseView> readCourseByAuthId(Long authorId) {
 
