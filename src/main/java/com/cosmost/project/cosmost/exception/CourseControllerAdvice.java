@@ -13,7 +13,15 @@ public class CourseControllerAdvice {
 
     // 코스 여부
     @ExceptionHandler(CourseIdNotfound.class)
-    public ResponseEntity<String> LocationCategoryIdNotfoundException(CourseIdNotfound exception) {
+    public ResponseEntity<String> CourseIdNotfoundException(CourseIdNotfound exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+    // 쿼리 여부
+    @ExceptionHandler(QueryNotfound.class)
+    public ResponseEntity<String> QueryNotfoundException(QueryNotfound exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
