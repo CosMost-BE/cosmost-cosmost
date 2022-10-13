@@ -3,7 +3,6 @@ package com.cosmost.project.cosmost.service;
 import com.cosmost.project.cosmost.exception.CourseIdNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityRepository;
-import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import com.cosmost.project.cosmost.view.CourseView;
@@ -93,6 +92,27 @@ public class CosmostsServiceImpl implements CosmostsService {
         });
 
         return courseViewList;
+    }
+
+    // 코스 한 개 상세 조회
+    @Override
+    public CourseView readCourseByCourseId(Long id) {
+
+        CourseEntity courseEntity = courseEntityRepository.findById(id)
+                .orElseThrow(CourseIdNotfound::new);
+
+        if(!courseEntity.equals(null)) {
+
+            return CourseView.builder()
+                    .id(courseEntity.getId())
+                    .authorId(courseEntity.getAuthorId())
+                    .courseTitle(courseEntity.getCourseTitle())
+                    .courseComment(courseEntity.getCourseComment())
+                    .courseStatus(courseEntity.getCourseStatus())
+                    .build();
+        }
+
+        return null;
     }
 
 
