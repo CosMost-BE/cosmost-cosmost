@@ -1,12 +1,10 @@
 package com.cosmost.project.cosmost.service;
 
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
-import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import com.cosmost.project.cosmost.view.CourseView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +13,8 @@ public interface CosmostsService {
     Optional<CourseEntity> updateCourse(Long id, UpdateCourseRequest updateCourseRequest);
     Optional<CourseEntity> deleteCourse(Long id);
     List<CourseView> readCourseByAuthId();
+    CourseView readCourseByCourseId(Long id);
+
 
 
 

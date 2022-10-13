@@ -1,6 +1,7 @@
 package com.cosmost.project.cosmost.controller;
 
 import com.cosmost.project.cosmost.exception.QueryNotfound;
+import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import com.cosmost.project.cosmost.service.CosmostsService;
@@ -69,6 +70,15 @@ public class CourseController {
         } else {
             throw new QueryNotfound();
         }
+    }
+
+    // 코스 한 개 상세 조회
+    @GetMapping("/cosmosts/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> readCourseByCourseId(@PathVariable Long id) {
+        CourseView courseView = cosmostsService.readCourseByCourseId(id);
+
+        return ResponseEntity.status(200).body(courseView);
     }
 
 }
