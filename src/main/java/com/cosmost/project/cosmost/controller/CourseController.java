@@ -72,7 +72,7 @@ public class CourseController {
         }
     }
 
-    // 작성한 코스 목록 조회
+    // 코스 한 개 상세 조회
     @GetMapping("/cosmosts/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> readCourseByCourseId(@PathVariable Long id) {
