@@ -11,7 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,9 +78,8 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     // 작성한 코스 목록 조회
     @Override
-    public List<CourseView> readCourseByAuthId(Long authorId) {
-
-        List<Course> courseList = courseEntityRepository.findAllByAuthorId(authorId);
+    public List<CourseView> readCourseByAuthId() {
+        List<CourseEntity> courseList = courseEntityRepository.findAllByAuthorId(getIdByHeader());
         List<CourseView> courseViewList = new ArrayList<>();
 
         courseList.forEach(course -> {
@@ -94,7 +96,13 @@ public class CosmostsServiceImpl implements CosmostsService {
     }
 
 
+    // header 내에 Authorization으로 있는 기본키를 반환
+    private Long getIdByHeader() {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        Long id = Long.parseLong(request.getHeader("Authorization"));
 
-
+        return id;
+    }
 
 }

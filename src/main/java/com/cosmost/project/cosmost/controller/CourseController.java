@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -57,19 +58,16 @@ public class CourseController {
     // 코스 조회
     @GetMapping("/cosmosts")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> readCourse(@RequestParam(value="filter") String filter,
-                                        @RequestParam(value="limit") String limit,
-                                        @RequestParam(value="category") String category,
-                                        Long authorId) {
-
+    public ResponseEntity<?> readCourse(@RequestParam(value="filter", required=false) String filter,
+                                        @RequestParam(value="limit", required=false) String limit,
+                                        @RequestParam(value="category", required=false) String category) {
 
         if(filter.equals("auth")) {
-            List<CourseView> courseView = cosmostsService.readCourseByAuthId(authorId);
+            List<CourseView> courseView = cosmostsService.readCourseByAuthId();
             return ResponseEntity.status(200).body(courseView);
         }
 
         return null;
-
     }
 
 }
