@@ -6,11 +6,16 @@ import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityReposit
 import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
+import com.cosmost.project.cosmost.view.CourseView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,5 +76,33 @@ public class CosmostsServiceImpl implements CosmostsService {
         return null;
     }
 
+    // 작성한 코스 목록 조회
+    @Override
+    public List<CourseView> readCourseByAuthId() {
+        List<CourseEntity> courseList = courseEntityRepository.findAllByAuthorId(getIdByHeader());
+        List<CourseView> courseViewList = new ArrayList<>();
+
+        courseList.forEach(course -> {
+            courseViewList.add(CourseView.builder()
+                    .id(course.getId())
+                    .authorId(course.getAuthorId())
+                    .courseTitle(course.getCourseTitle())
+                    .courseComment(course.getCourseComment())
+                    .courseStatus(course.getCourseStatus())
+                    .build());
+        });
+
+        return courseViewList;
+    }
+
+
+    // header 내에 Authorization으로 있는 기본키를 반환
+    private Long getIdByHeader() {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        Long id = Long.parseLong(request.getHeader("Authorization"));
+
+        return id;
+    }
 
 }
