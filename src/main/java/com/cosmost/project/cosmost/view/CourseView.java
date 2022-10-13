@@ -3,11 +3,15 @@ package com.cosmost.project.cosmost.view;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
 import com.cosmost.project.cosmost.model.Course;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString // toString() 메소드를 생성
+@Builder
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CourseView {
     private Long id;
