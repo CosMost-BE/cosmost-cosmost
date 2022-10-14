@@ -2,6 +2,7 @@ package com.cosmost.project.cosmost.requestbody;
 
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
+import com.cosmost.project.cosmost.model.Course;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

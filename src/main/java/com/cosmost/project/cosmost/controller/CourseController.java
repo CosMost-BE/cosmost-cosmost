@@ -2,6 +2,7 @@ package com.cosmost.project.cosmost.controller;
 
 import com.cosmost.project.cosmost.exception.QueryNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
+import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
@@ -62,8 +63,8 @@ public class CourseController {
                                         @RequestParam(value="category", required=false) String category) {
 
         if(String.valueOf(filter).equals("auth")) {
-            List<ReadCourseResponse> readCourseResponse = cosmostsService.readCourseByAuthId();
-            return ResponseEntity.status(200).body(readCourseResponse);
+            List<Course> course = cosmostsService.readCourseByAuthId();
+            return ResponseEntity.status(200).body(course);
         } else {
             throw new QueryNotfound();
         }

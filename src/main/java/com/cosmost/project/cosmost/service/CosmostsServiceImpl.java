@@ -3,6 +3,7 @@ package com.cosmost.project.cosmost.service;
 import com.cosmost.project.cosmost.exception.CourseIdNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityRepository;
+import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -75,26 +77,16 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     // 작성한 코스 목록 조회
     @Override
-    public List<ReadCourseResponse> readCourseByAuthId() {
+    public List<Course> readCourseByAuthId() {
         // header 내에 Authorization으로 있는 기본키를 반환
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         Long authorId = Long.parseLong(request.getHeader("Authorization"));
 
-        List<CourseEntity> courseList = courseEntityRepository.findAllByAuthorId(authorId);
-        List<ReadCourseResponse> readCourseResponseList = new ArrayList<>();
+        List<CourseEntity> courseEntityList = courseEntityRepository.findAllByAuthorId(authorId);
 
-        courseList.forEach(course -> {
-            readCourseResponseList.add(ReadCourseResponse.builder()
-                    .id(course.getId())
-                    .authorId(course.getAuthorId())
-                    .courseTitle(course.getCourseTitle())
-                    .courseComment(course.getCourseComment())
-                    .courseStatus(course.getCourseStatus())
-                    .build());
-        });
-
-        return readCourseResponseList;
+        return  courseEntityList.stream().map(course ->
+                new Course(course)).collect(Collectors.toList());
     }
 
     // 코스 한 개 상세 조회

@@ -10,8 +10,6 @@ import lombok.ToString;
 
 @Getter
 @ToString // toString() 메소드를 생성
-@Builder
-@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CourseView {
     private Long id;
