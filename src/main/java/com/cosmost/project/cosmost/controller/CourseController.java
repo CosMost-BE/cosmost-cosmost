@@ -4,6 +4,7 @@ import com.cosmost.project.cosmost.exception.QueryNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
+import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
 import com.cosmost.project.cosmost.service.CosmostsService;
 import com.cosmost.project.cosmost.view.CourseView;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,6 @@ public class CourseController {
 
     // 코스 등록
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createCourse(@Valid @RequestBody CreateCourseRequest createCourseRequest) {
         cosmostsService.createCourse(createCourseRequest);
 
@@ -40,7 +40,6 @@ public class CourseController {
 
     // 코스 수정
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> updateCourse(@PathVariable Long id,
                                           @Valid @RequestBody UpdateCourseRequest updateCourseRequest) {
         cosmostsService.updateCourse(id,updateCourseRequest);
@@ -50,7 +49,6 @@ public class CourseController {
 
     // 코스 삭제
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
         cosmostsService.deleteCourse(id);
 
@@ -59,14 +57,13 @@ public class CourseController {
 
     // 코스 조회
     @GetMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> readCourse(@RequestParam(value="filter", required=false) String filter,
                                         @RequestParam(value="limit", required=false) String limit,
                                         @RequestParam(value="category", required=false) String category) {
 
         if(String.valueOf(filter).equals("auth")) {
-            List<CourseView> courseView = cosmostsService.readCourseByAuthId();
-            return ResponseEntity.status(200).body(courseView);
+            List<ReadCourseResponse> readCourseResponse = cosmostsService.readCourseByAuthId();
+            return ResponseEntity.status(200).body(readCourseResponse);
         } else {
             throw new QueryNotfound();
         }
@@ -74,11 +71,10 @@ public class CourseController {
 
     // 코스 한 개 상세 조회
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> readCourseByCourseId(@PathVariable Long id) {
-        CourseView courseView = cosmostsService.readCourseByCourseId(id);
+        ReadCourseResponse readCourseResponse = cosmostsService.readCourseByCourseId(id);
 
-        return ResponseEntity.status(200).body(courseView);
+        return ResponseEntity.status(200).body(readCourseResponse);
     }
 
 }

@@ -5,6 +5,7 @@ import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityRepository;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
+import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
 import com.cosmost.project.cosmost.view.CourseView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,17 +75,17 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     // 작성한 코스 목록 조회
     @Override
-    public List<CourseView> readCourseByAuthId() {
+    public List<ReadCourseResponse> readCourseByAuthId() {
         // header 내에 Authorization으로 있는 기본키를 반환
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         Long authorId = Long.parseLong(request.getHeader("Authorization"));
 
         List<CourseEntity> courseList = courseEntityRepository.findAllByAuthorId(authorId);
-        List<CourseView> courseViewList = new ArrayList<>();
+        List<ReadCourseResponse> readCourseResponseList = new ArrayList<>();
 
         courseList.forEach(course -> {
-            courseViewList.add(CourseView.builder()
+            readCourseResponseList.add(ReadCourseResponse.builder()
                     .id(course.getId())
                     .authorId(course.getAuthorId())
                     .courseTitle(course.getCourseTitle())
@@ -93,19 +94,19 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .build());
         });
 
-        return courseViewList;
+        return readCourseResponseList;
     }
 
     // 코스 한 개 상세 조회
     @Override
-    public CourseView readCourseByCourseId(Long id) {
+    public ReadCourseResponse readCourseByCourseId(Long id) {
 
         CourseEntity courseEntity = courseEntityRepository.findById(id)
                 .orElseThrow(CourseIdNotfound::new);
 
         if(!courseEntity.equals(null)) {
 
-            return CourseView.builder()
+            return ReadCourseResponse.builder()
                     .id(courseEntity.getId())
                     .authorId(courseEntity.getAuthorId())
                     .courseTitle(courseEntity.getCourseTitle())
