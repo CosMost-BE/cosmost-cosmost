@@ -39,6 +39,8 @@ public class CosmostsServiceImpl implements CosmostsService {
         CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest);
         courseEntityRepository.save(courseEntity);
 
+
+
         return courseEntity;
     }
 
