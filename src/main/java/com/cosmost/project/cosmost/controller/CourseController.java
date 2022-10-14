@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/v1")
+@RequestMapping("/v1/cosmosts")
 public class CourseController {
 
     private final CosmostsService cosmostsService;
@@ -30,7 +30,7 @@ public class CourseController {
     }
 
     // 코스 등록
-    @PostMapping("/cosmosts")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> createCourse(@Valid @RequestBody CreateCourseRequest createCourseRequest) {
         cosmostsService.createCourse(createCourseRequest);
@@ -39,7 +39,7 @@ public class CourseController {
     }
 
     // 코스 수정
-    @PutMapping("/cosmosts/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> updateCourse(@PathVariable Long id,
                                           @Valid @RequestBody UpdateCourseRequest updateCourseRequest) {
@@ -49,7 +49,7 @@ public class CourseController {
     }
 
     // 코스 삭제
-    @DeleteMapping("/cosmosts/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> deleteCourse(@PathVariable Long id) {
         cosmostsService.deleteCourse(id);
@@ -58,13 +58,13 @@ public class CourseController {
     }
 
     // 코스 조회
-    @GetMapping("/cosmosts")
+    @GetMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> readCourse(@RequestParam(value="filter", required=false) String filter,
                                         @RequestParam(value="limit", required=false) String limit,
                                         @RequestParam(value="category", required=false) String category) {
 
-        if(filter.equals("auth")) {
+        if(String.valueOf(filter).equals("auth")) {
             List<CourseView> courseView = cosmostsService.readCourseByAuthId();
             return ResponseEntity.status(200).body(courseView);
         } else {
@@ -73,7 +73,7 @@ public class CourseController {
     }
 
     // 코스 한 개 상세 조회
-    @GetMapping("/cosmosts/{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> readCourseByCourseId(@PathVariable Long id) {
         CourseView courseView = cosmostsService.readCourseByCourseId(id);

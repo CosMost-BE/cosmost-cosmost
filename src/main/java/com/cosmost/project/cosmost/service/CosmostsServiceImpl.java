@@ -61,7 +61,7 @@ public class CosmostsServiceImpl implements CosmostsService {
     // 코스 삭제
     @Transactional
     @Override
-    public Optional<CourseEntity> deleteCourse(Long id) {
+    public void deleteCourse(Long id) {
 
         Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
                 courseEntityRepository.findById(id).orElseThrow(
@@ -69,16 +69,18 @@ public class CosmostsServiceImpl implements CosmostsService {
 
         if(courseEntityCheck.isPresent()) {
             courseEntityRepository.deleteById(id);
-            return courseEntityCheck;
         }
-
-        return null;
     }
 
     // 작성한 코스 목록 조회
     @Override
     public List<CourseView> readCourseByAuthId() {
-        List<CourseEntity> courseList = courseEntityRepository.findAllByAuthorId(getIdByHeader());
+        // header 내에 Authorization으로 있는 기본키를 반환
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        Long authorId = Long.parseLong(request.getHeader("Authorization"));
+
+        List<CourseEntity> courseList = courseEntityRepository.findAllByAuthorId(authorId);
         List<CourseView> courseViewList = new ArrayList<>();
 
         courseList.forEach(course -> {
@@ -113,16 +115,6 @@ public class CosmostsServiceImpl implements CosmostsService {
         }
 
         return null;
-    }
-
-
-    // header 내에 Authorization으로 있는 기본키를 반환
-    private Long getIdByHeader() {
-        HttpServletRequest request = ((ServletRequestAttributes)
-                RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long id = Long.parseLong(request.getHeader("Authorization"));
-
-        return id;
     }
 
 }
