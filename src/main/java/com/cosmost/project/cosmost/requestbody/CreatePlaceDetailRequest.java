@@ -22,7 +22,6 @@ public class CreatePlaceDetailRequest {
     @NotBlank(message = "장소 URL은 필수 입력 값입니다.")
     private String placeUrl;
 
-    @NotBlank(message = "장소 순서는 필수 입력 값입니다.")
     private int placeOrder;
 
     @NotBlank(message = "장소 후기는 필수 입력 값입니다.")

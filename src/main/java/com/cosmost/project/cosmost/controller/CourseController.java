@@ -1,20 +1,15 @@
 package com.cosmost.project.cosmost.controller;
 
 import com.cosmost.project.cosmost.exception.QueryNotfound;
-import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
-import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
 import com.cosmost.project.cosmost.service.CosmostsService;
-import com.cosmost.project.cosmost.view.CourseView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -73,9 +68,9 @@ public class CourseController {
     // 코스 한 개 상세 조회
     @GetMapping("/{id}")
     public ResponseEntity<?> readCourseByCourseId(@PathVariable Long id) {
-        ReadCourseResponse readCourseResponse = cosmostsService.readCourseByCourseId(id);
+        Course course = cosmostsService.readCourseByCourseId(id);
 
-        return ResponseEntity.status(200).body(readCourseResponse);
+        return ResponseEntity.status(200).body(course);
     }
 
 }

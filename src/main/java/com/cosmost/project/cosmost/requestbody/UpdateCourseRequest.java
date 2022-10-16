@@ -7,7 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -25,6 +27,9 @@ public class UpdateCourseRequest {
     private String courseComment;
 
     private CourseStatus courseStatus;
+
+    @Valid
+    private List<CreatePlaceDetailRequest> createPlaceDetailRequestList;
 
     public CourseEntity updateDtoToEntity(Long id, UpdateCourseRequest updateCourseRequest) {
         return CourseEntity.builder()

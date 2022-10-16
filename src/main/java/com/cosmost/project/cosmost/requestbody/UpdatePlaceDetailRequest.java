@@ -23,7 +23,6 @@ public class UpdatePlaceDetailRequest {
     @NotBlank(message = "장소 URL은 필수 입력 값입니다.")
     private String placeUrl;
 
-    @NotBlank(message = "장소 순서는 필수 입력 값입니다.")
     private int placeOrder;
 
     @NotBlank(message = "장소 후기는 필수 입력 값입니다.")
@@ -31,7 +30,7 @@ public class UpdatePlaceDetailRequest {
 
     private Long course;
 
-    public PlaceDetailEntity updateDtoToEntity(UpdatePlaceDetailRequest updatePlaceDetailRequest, CourseEntity courseEntity) {
+    public PlaceDetailEntity updateDtoToEntity(Long id, UpdatePlaceDetailRequest updatePlaceDetailRequest, CourseEntity courseEntity) {
         return PlaceDetailEntity.builder()
                 .id(updatePlaceDetailRequest.getId())
                 .placeName(updatePlaceDetailRequest.getPlaceName())

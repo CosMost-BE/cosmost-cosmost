@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 파라미터가 없는 생성자를 생성
 @Table(name = "place_detail")
-public class PlaceDetailEntity extends BaseTimeEntity{
+public class PlaceDetailEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

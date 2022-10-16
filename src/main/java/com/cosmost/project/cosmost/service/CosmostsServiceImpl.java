@@ -2,12 +2,14 @@ package com.cosmost.project.cosmost.service;
 
 import com.cosmost.project.cosmost.exception.CourseIdNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
+import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
 import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityRepository;
+import com.cosmost.project.cosmost.infrastructure.repository.PlaceDetailEntityRepository;
 import com.cosmost.project.cosmost.model.Course;
+import com.cosmost.project.cosmost.model.PlaceDetail;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
+import com.cosmost.project.cosmost.requestbody.CreatePlaceDetailRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
-import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
-import com.cosmost.project.cosmost.view.CourseView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +18,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,41 +27,49 @@ import java.util.stream.Collectors;
 public class CosmostsServiceImpl implements CosmostsService {
 
     private final CourseEntityRepository courseEntityRepository;
+    private final PlaceDetailEntityRepository placeDetailEntityRepository;
 
     @Autowired
-    public CosmostsServiceImpl(CourseEntityRepository courseEntityRepository) {
+    public CosmostsServiceImpl(CourseEntityRepository courseEntityRepository, PlaceDetailEntityRepository placeDetailEntityRepository) {
         this.courseEntityRepository = courseEntityRepository;
+        this.placeDetailEntityRepository = placeDetailEntityRepository;
     }
 
     // 코스 등록
     @Transactional
     @Override
-    public CourseEntity createCourse(CreateCourseRequest createCourseRequest) {
+    public void createCourse(CreateCourseRequest createCourseRequest) {
         CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest);
         courseEntityRepository.save(courseEntity);
 
-
-
-        return courseEntity;
+        for(CreatePlaceDetailRequest placeDetailRequest : createCourseRequest.getCreatePlaceDetailRequestList()) {
+            placeDetailEntityRepository.save(placeDetailRequest.createDtoToEntity(placeDetailRequest, courseEntity));
+        }
     }
 
     // 코스 수정
     @Transactional
     @Override
-    public Optional<CourseEntity> updateCourse(Long id, UpdateCourseRequest updateCourseRequest) {
+    public void updateCourse(Long id, UpdateCourseRequest updateCourseRequest) {
 
         Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
                 courseEntityRepository.findById(id).orElseThrow(
                         CourseIdNotfound::new));
 
-        if(courseEntityCheck.isPresent()) {
+        if (courseEntityCheck.isPresent()) {
             CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(id, updateCourseRequest);
             courseEntityRepository.save(courseEntity);
 
-            return courseEntityCheck;
-        }
+            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
 
-        return null;
+            for (PlaceDetailEntity temp : placeDetailEntityList) {
+                placeDetailEntityRepository.deleteById(temp.getId());
+            }
+
+            for (CreatePlaceDetailRequest placeDetailRequest : updateCourseRequest.getCreatePlaceDetailRequestList()) {
+                placeDetailEntityRepository.save(placeDetailRequest.createDtoToEntity(placeDetailRequest, courseEntity));
+            }
+        }
     }
 
     // 코스 삭제
@@ -73,6 +82,12 @@ public class CosmostsServiceImpl implements CosmostsService {
                         CourseIdNotfound::new));
 
         if(courseEntityCheck.isPresent()) {
+            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
+
+            for (PlaceDetailEntity temp : placeDetailEntityList) {
+                placeDetailEntityRepository.deleteById(temp.getId());
+            }
+
             courseEntityRepository.deleteById(id);
         }
     }
@@ -93,19 +108,26 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     // 코스 한 개 상세 조회
     @Override
-    public ReadCourseResponse readCourseByCourseId(Long id) {
+    public Course readCourseByCourseId(Long id) {
 
-        CourseEntity courseEntity = courseEntityRepository.findById(id)
-                .orElseThrow(CourseIdNotfound::new);
+        Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
+                courseEntityRepository.findById(id).orElseThrow(
+                        CourseIdNotfound::new));
 
-        if(!courseEntity.equals(null)) {
+        if(courseEntityCheck.isPresent()) {
 
-            return ReadCourseResponse.builder()
-                    .id(courseEntity.getId())
-                    .authorId(courseEntity.getAuthorId())
-                    .courseTitle(courseEntity.getCourseTitle())
-                    .courseComment(courseEntity.getCourseComment())
-                    .courseStatus(courseEntity.getCourseStatus())
+            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
+
+            placeDetailEntityList.stream().map(placeDetail ->
+                    new PlaceDetail(placeDetail)).collect(Collectors.toList());
+
+            return Course.builder()
+                    .id(courseEntityCheck.get().getId())
+                    .authorId(courseEntityCheck.get().getAuthorId())
+                    .courseTitle(courseEntityCheck.get().getCourseTitle())
+                    .courseComment(courseEntityCheck.get().getCourseComment())
+                    .courseStatus(courseEntityCheck.get().getCourseStatus())
+                    .placeDetailList(placeDetailEntityList)
                     .build();
         }
 
