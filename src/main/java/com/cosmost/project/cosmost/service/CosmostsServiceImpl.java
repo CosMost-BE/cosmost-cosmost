@@ -10,6 +10,8 @@ import com.cosmost.project.cosmost.model.PlaceDetail;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.CreatePlaceDetailRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
+import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
+import com.cosmost.project.cosmost.responsebody.ReadPlaceDetailResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,46 +97,39 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     // 작성한 코스 목록 조회
     @Override
-    public List<Course> readCourseByAuthId() {
+    public List<ReadCourseResponse> readCourseByAuthId() {
         // header 내에 Authorization으로 있는 기본키를 반환
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         Long authorId = Long.parseLong(request.getHeader("Authorization"));
 
         List<CourseEntity> courseEntityList = courseEntityRepository.findAllByAuthorId(authorId);
-        List<Course> courseList = new ArrayList<>();
+        List<ReadCourseResponse> courseList = new ArrayList<>();
 
 
         courseEntityList.forEach(courseEntity -> {
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(courseEntity.getId());
-            List<PlaceDetail> placeDetailList = new ArrayList<>();
+            List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
 
             placeDetailEntityList.forEach(placeDetailEntity -> {
-                placeDetailList.add(PlaceDetail.builder()
+                readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
                         .id(placeDetailEntity.getId())
                         .placeName(placeDetailEntity.getPlaceName())
-                        .placeComment(placeDetailEntity.getPlaceComment())
                         .placeOrder(placeDetailEntity.getPlaceOrder())
-                        .placeUrl(placeDetailEntity.getPlaceUrl())
                         .build());
             });
 
-            courseList.add(Course.builder()
+            courseList.add(ReadCourseResponse.builder()
                             .id(courseEntity.getId())
                             .authorId(courseEntity.getAuthorId())
                             .courseTitle(courseEntity.getCourseTitle())
-                            .courseComment(courseEntity.getCourseComment())
                             .courseStatus(courseEntity.getCourseStatus())
-                            .placeDetailList(placeDetailList)
+                            .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .build());
-
-
         });
 
         return courseList;
 
-//        return  courseEntityList.stream().map(course ->
-//                new Course(course)).collect(Collectors.toList());
     }
 
     // 코스 한 개 상세 조회
@@ -159,9 +154,6 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .placeUrl(placeDetailEntity.getPlaceUrl())
                         .build());
             });
-
-//            placeDetailEntityList.stream().map(placeDetail ->
-//                    new PlaceDetail(placeDetail)).collect(Collectors.toList());
 
             return Course.builder()
                     .id(courseEntityCheck.get().getId())

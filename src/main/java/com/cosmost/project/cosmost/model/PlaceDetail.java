@@ -20,8 +20,6 @@ public class PlaceDetail {
     private int placeOrder;
     private String placeComment;
 
-//    private Long course;
-
     public PlaceDetail(PlaceDetailEntity placeDetailEntity) {
         this.id = placeDetailEntity.getId();
         this.placeName = placeDetailEntity.getPlaceName();

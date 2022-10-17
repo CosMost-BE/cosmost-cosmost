@@ -4,6 +4,7 @@ import com.cosmost.project.cosmost.exception.QueryNotfound;
 import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
+import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
 import com.cosmost.project.cosmost.service.CosmostsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class CourseController {
                                         @RequestParam(value="category", required=false) String category) {
 
         if(String.valueOf(filter).equals("auth")) {
-            List<Course> course = cosmostsService.readCourseByAuthId();
+            List<ReadCourseResponse> course = cosmostsService.readCourseByAuthId();
             return ResponseEntity.status(200).body(course);
         } else {
             throw new QueryNotfound();

@@ -1,22 +1,25 @@
 package com.cosmost.project.cosmost.responsebody;
 
 import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
+import com.cosmost.project.cosmost.model.PlaceDetail;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReadPlaceDetailResponse {
+public class ReadCourseResponse {
 
     private Long id;
+    private Long authorId;
+    private String courseTitle;
+    private CourseStatus courseStatus;
 
-    private String placeName;
-    private int placeOrder;
+    private List<ReadPlaceDetailResponse> readPlaceDetailResponseList;
 
 }
