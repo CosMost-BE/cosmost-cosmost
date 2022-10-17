@@ -7,9 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Entity
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 파라미터가 없는 생성자를 생성
-@AllArgsConstructor // 클래스에 존재하는 모든 필드에 대한 생성자를 자동으로 생성
 @Table(name = "course")
 public class CourseEntity extends BaseTimeEntity{
 
@@ -28,4 +26,15 @@ public class CourseEntity extends BaseTimeEntity{
 
     @Enumerated(EnumType.STRING)
     private CourseStatus courseStatus;
+
+    @Builder
+    public CourseEntity(Long id, Long authorId,
+                        String courseTitle, String courseComment, CourseStatus courseStatus) {
+        this.id = id;
+        this.authorId = authorId;
+        this.courseTitle = courseTitle;
+        this.courseComment = courseComment;
+        this.courseStatus = courseStatus;
+    }
+
 }
