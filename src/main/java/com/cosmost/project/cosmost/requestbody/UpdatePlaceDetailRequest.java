@@ -30,7 +30,7 @@ public class UpdatePlaceDetailRequest {
 
     private Long course;
 
-    public PlaceDetailEntity updateDtoToEntity(Long id, UpdatePlaceDetailRequest updatePlaceDetailRequest, CourseEntity courseEntity) {
+    public PlaceDetailEntity updateDtoToEntity(UpdatePlaceDetailRequest updatePlaceDetailRequest, CourseEntity courseEntity) {
         return PlaceDetailEntity.builder()
                 .id(updatePlaceDetailRequest.getId())
                 .placeName(updatePlaceDetailRequest.getPlaceName())
