@@ -4,10 +4,12 @@ import com.cosmost.project.cosmost.exception.CourseIdNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
 import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityRepository;
+import com.cosmost.project.cosmost.infrastructure.repository.HashtagEntityRepository;
 import com.cosmost.project.cosmost.infrastructure.repository.PlaceDetailEntityRepository;
 import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.model.PlaceDetail;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
+import com.cosmost.project.cosmost.requestbody.CreateHashtagRequest;
 import com.cosmost.project.cosmost.requestbody.CreatePlaceDetailRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
@@ -31,11 +33,14 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     private final CourseEntityRepository courseEntityRepository;
     private final PlaceDetailEntityRepository placeDetailEntityRepository;
+    private final HashtagEntityRepository hashtagEntityRepository;
 
     @Autowired
-    public CosmostsServiceImpl(CourseEntityRepository courseEntityRepository, PlaceDetailEntityRepository placeDetailEntityRepository) {
+    public CosmostsServiceImpl(CourseEntityRepository courseEntityRepository, PlaceDetailEntityRepository placeDetailEntityRepository,
+                               HashtagEntityRepository hashtagEntityRepository) {
         this.courseEntityRepository = courseEntityRepository;
         this.placeDetailEntityRepository = placeDetailEntityRepository;
+        this.hashtagEntityRepository = hashtagEntityRepository;
     }
 
     // 코스 등록
@@ -47,6 +52,10 @@ public class CosmostsServiceImpl implements CosmostsService {
 
         for(CreatePlaceDetailRequest placeDetailRequest : createCourseRequest.getCreatePlaceDetailRequestList()) {
             placeDetailEntityRepository.save(placeDetailRequest.createDtoToEntity(placeDetailRequest, courseEntity));
+        }
+
+        for(CreateHashtagRequest hashtagRequest : createCourseRequest.getCreateHashtagRequestList()) {
+            hashtagEntityRepository.save(hashtagRequest.createDtoToEntity(hashtagRequest, courseEntity));
         }
     }
 
