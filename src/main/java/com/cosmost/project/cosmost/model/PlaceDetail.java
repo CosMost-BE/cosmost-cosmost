@@ -1,14 +1,16 @@
 package com.cosmost.project.cosmost.model;
 
-import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
-import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
 import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 
 @Getter
 @ToString
+@Builder
+@AllArgsConstructor
 public class PlaceDetail {
 
     private Long id;
@@ -18,7 +20,7 @@ public class PlaceDetail {
     private int placeOrder;
     private String placeComment;
 
-    private Long course;
+//    private Long course;
 
     public PlaceDetail(PlaceDetailEntity placeDetailEntity) {
         this.id = placeDetailEntity.getId();
@@ -26,7 +28,6 @@ public class PlaceDetail {
         this.placeUrl = placeDetailEntity.getPlaceUrl();
         this.placeOrder = placeDetailEntity.getPlaceOrder();
         this.placeComment = placeDetailEntity.getPlaceComment();
-        this.course = placeDetailEntity.getCourse().getId();
-
     }
+
 }

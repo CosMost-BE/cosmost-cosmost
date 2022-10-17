@@ -1,6 +1,5 @@
 package com.cosmost.project.cosmost.infrastructure.entity;
 
-import com.cosmost.project.cosmost.model.Course;
 import lombok.*;
 
 import javax.persistence.*;

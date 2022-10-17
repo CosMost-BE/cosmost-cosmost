@@ -18,6 +18,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -101,9 +102,39 @@ public class CosmostsServiceImpl implements CosmostsService {
         Long authorId = Long.parseLong(request.getHeader("Authorization"));
 
         List<CourseEntity> courseEntityList = courseEntityRepository.findAllByAuthorId(authorId);
+        List<Course> courseList = new ArrayList<>();
 
-        return  courseEntityList.stream().map(course ->
-                new Course(course)).collect(Collectors.toList());
+
+        courseEntityList.forEach(courseEntity -> {
+            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(courseEntity.getId());
+            List<PlaceDetail> placeDetailList = new ArrayList<>();
+
+            placeDetailEntityList.forEach(placeDetailEntity -> {
+                placeDetailList.add(PlaceDetail.builder()
+                        .id(placeDetailEntity.getId())
+                        .placeName(placeDetailEntity.getPlaceName())
+                        .placeComment(placeDetailEntity.getPlaceComment())
+                        .placeOrder(placeDetailEntity.getPlaceOrder())
+                        .placeUrl(placeDetailEntity.getPlaceUrl())
+                        .build());
+            });
+
+            courseList.add(Course.builder()
+                            .id(courseEntity.getId())
+                            .authorId(courseEntity.getAuthorId())
+                            .courseTitle(courseEntity.getCourseTitle())
+                            .courseComment(courseEntity.getCourseComment())
+                            .courseStatus(courseEntity.getCourseStatus())
+                            .placeDetailList(placeDetailList)
+                    .build());
+
+
+        });
+
+        return courseList;
+
+//        return  courseEntityList.stream().map(course ->
+//                new Course(course)).collect(Collectors.toList());
     }
 
     // 코스 한 개 상세 조회
@@ -117,9 +148,20 @@ public class CosmostsServiceImpl implements CosmostsService {
         if(courseEntityCheck.isPresent()) {
 
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
+            List<PlaceDetail> placeDetailList = new ArrayList<>();
 
-            placeDetailEntityList.stream().map(placeDetail ->
-                    new PlaceDetail(placeDetail)).collect(Collectors.toList());
+            placeDetailEntityList.forEach(placeDetailEntity -> {
+                placeDetailList.add(PlaceDetail.builder()
+                        .id(placeDetailEntity.getId())
+                        .placeName(placeDetailEntity.getPlaceName())
+                        .placeComment(placeDetailEntity.getPlaceComment())
+                        .placeOrder(placeDetailEntity.getPlaceOrder())
+                        .placeUrl(placeDetailEntity.getPlaceUrl())
+                        .build());
+            });
+
+//            placeDetailEntityList.stream().map(placeDetail ->
+//                    new PlaceDetail(placeDetail)).collect(Collectors.toList());
 
             return Course.builder()
                     .id(courseEntityCheck.get().getId())
@@ -127,7 +169,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .courseTitle(courseEntityCheck.get().getCourseTitle())
                     .courseComment(courseEntityCheck.get().getCourseComment())
                     .courseStatus(courseEntityCheck.get().getCourseStatus())
-                    .placeDetailList(placeDetailEntityList)
+                    .placeDetailList(placeDetailList)
                     .build();
         }
 

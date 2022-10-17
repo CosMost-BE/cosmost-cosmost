@@ -20,7 +20,7 @@ public class Course {
     private String courseComment;
     private CourseStatus courseStatus;
 
-    private List<PlaceDetailEntity> placeDetailList;
+    private List<PlaceDetail> placeDetailList;
 
 
 
