@@ -225,13 +225,13 @@ public class CosmostsServiceImpl implements CosmostsService {
             });
 
             courseList.add(ReadCourseResponse.builder()
-                            .id(courseEntity.getId())
-                            .authorId(courseEntity.getAuthorId())
-                            .courseTitle(courseEntity.getCourseTitle())
-                            .courseStatus(courseEntity.getCourseStatus())
-                            .readPlaceDetailResponseList(readPlaceDetailResponseList)
-                            .hashtagList(hashtagList)
-                            .readPlaceImgResponseList(readPlaceImgResponseList)
+                    .id(courseEntity.getId())
+                    .authorId(courseEntity.getAuthorId())
+                    .courseTitle(courseEntity.getCourseTitle())
+                    .courseStatus(courseEntity.getCourseStatus())
+                    .readPlaceDetailResponseList(readPlaceDetailResponseList)
+                    .hashtagList(hashtagList)
+                    .readPlaceImgResponseList(readPlaceImgResponseList)
                     .build());
         });
 
