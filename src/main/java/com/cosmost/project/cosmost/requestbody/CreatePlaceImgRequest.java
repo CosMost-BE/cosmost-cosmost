@@ -27,11 +27,11 @@ public class CreatePlaceImgRequest {
 
     private Long course;
 
-    public PlaceImgEntity createDtoToEntity(CreatePlaceImgRequest createPlaceImgRequest, CourseEntity courseEntity) {
+    public PlaceImgEntity createDtoToEntity(CourseEntity courseEntity, FileInfoRequest fileInfoRequest) {
         return PlaceImgEntity.builder()
-                .placeImgOriginName(createPlaceImgRequest.getPlaceImgOriginName())
-                .placeImgSaveName(createPlaceImgRequest.getPlaceImgSaveName())
-                .placeImgUrl(createPlaceImgRequest.getPlaceImgUrl())
+                .placeImgOriginName(fileInfoRequest.getName())
+                .placeImgSaveName(fileInfoRequest.getRemotePath())
+                .placeImgUrl(fileInfoRequest.getUrl())
                 .course(courseEntity)
                 .build();
     }

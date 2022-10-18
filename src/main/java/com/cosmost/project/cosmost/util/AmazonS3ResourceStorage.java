@@ -1,7 +1,7 @@
 package com.cosmost.project.cosmost.util;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.cosmost.project.cosmost.requestbody.FileInfoDto;
+import com.cosmost.project.cosmost.requestbody.FileInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,13 +16,13 @@ public class AmazonS3ResourceStorage {
     private String bucket;
     private final AmazonS3 amazonS3;
 
-    public void store(FileInfoDto fileInfoDto, MultipartFile multipartFile) {
-        File file = new File(fileInfoDto.getLocalPath());
+    public void store(FileInfoRequest fileInfoRequest, MultipartFile multipartFile) {
+        File file = new File(fileInfoRequest.getLocalPath());
 
         try {
             multipartFile.transferTo(file);
 
-            amazonS3.putObject(bucket, fileInfoDto.getRemotePath(), file);
+            amazonS3.putObject(bucket, fileInfoRequest.getRemotePath(), file);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

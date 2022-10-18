@@ -12,27 +12,29 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FileInfoDto {
+public class FileInfoRequest {
     private String id;
     private String name;
     private String format;
     private String localPath;
     private String remotePath;
+    private String url;
     private long bytes;
 
     @Builder.Default
     private LocalDateTime createTime = LocalDateTime.now();
 
-    public static FileInfoDto multipartOf(MultipartFile multipartFile, String Path) {
+    public static FileInfoRequest multipartOf(MultipartFile multipartFile, String Path) {
         final String fileId = MultipartUtil.createFileUUID();
         final String format = MultipartUtil.getFormat(multipartFile.getContentType());
 
-        return FileInfoDto.builder()
+        return FileInfoRequest.builder()
                 .id(fileId)
                 .name(multipartFile.getOriginalFilename())
                 .format(format)
                 .localPath(MultipartUtil.createLocalPath(fileId, format))
                 .remotePath(MultipartUtil.createRemotePath(Path, fileId, format))
+                .url(MultipartUtil.createURL(MultipartUtil.createRemotePath(Path, fileId, format)))
                 .bytes(multipartFile.getSize())
                 .build();
     }

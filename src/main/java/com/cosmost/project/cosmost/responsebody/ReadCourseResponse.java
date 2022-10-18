@@ -23,6 +23,8 @@ public class ReadCourseResponse {
 
     private List<ReadPlaceDetailResponse> readPlaceDetailResponseList;
     private List<Hashtag> hashtagList;
+    private List<ReadPlaceImgResponse> readPlaceImgResponseList;
+
 
 
 }
