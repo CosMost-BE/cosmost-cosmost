@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -29,8 +30,10 @@ public class CourseController {
 
     // 코스 등록
     @PostMapping("")
-    public ResponseEntity<?> createCourse(@Valid @RequestBody CreateCourseRequest createCourseRequest) {
-        cosmostsService.createCourse(createCourseRequest);
+    public ResponseEntity<?> createCourse(@Valid @RequestPart CreateCourseRequest createCourseRequest,
+                                          @RequestPart(value="file", required = false) List<MultipartFile> file) {
+
+        cosmostsService.createCourse(createCourseRequest, file);
 
         return ResponseEntity.ok("코스가 추가되었습니다.");
     }
@@ -38,8 +41,9 @@ public class CourseController {
     // 코스 수정
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCourse(@PathVariable Long id,
-                                          @Valid @RequestBody UpdateCourseRequest updateCourseRequest) {
-        cosmostsService.updateCourse(id,updateCourseRequest);
+                                          @Valid @RequestPart UpdateCourseRequest updateCourseRequest,
+                                          @RequestPart(value="file", required = false) List<MultipartFile> file) {
+        cosmostsService.updateCourse(id,updateCourseRequest, file);
 
         return ResponseEntity.ok("코스가 수정되었습니다.");
     }
