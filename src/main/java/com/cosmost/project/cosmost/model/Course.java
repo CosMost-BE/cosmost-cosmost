@@ -21,7 +21,7 @@ public class Course {
     private CourseStatus courseStatus;
 
     private List<PlaceDetail> placeDetailList;
-
+    private List<Hashtag> hashtagList;
 
 
     public Course(CourseEntity courseEntity) {
