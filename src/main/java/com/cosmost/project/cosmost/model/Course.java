@@ -22,6 +22,7 @@ public class Course {
 
     private List<PlaceDetail> placeDetailList;
     private List<Hashtag> hashtagList;
+    private List<PlaceImg> placeImgList;
 
 
     public Course(CourseEntity courseEntity) {
@@ -31,5 +32,8 @@ public class Course {
         this.courseComment = courseEntity.getCourseComment();
         this.courseStatus = courseEntity.getCourseStatus();
         this.placeDetailList = getPlaceDetailList();
+        this.hashtagList = getHashtagList();
+        this.placeImgList = getPlaceImgList();
+
     }
 }
