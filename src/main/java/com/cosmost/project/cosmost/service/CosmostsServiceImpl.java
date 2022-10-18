@@ -2,12 +2,16 @@ package com.cosmost.project.cosmost.service;
 
 import com.cosmost.project.cosmost.exception.CourseIdNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
+import com.cosmost.project.cosmost.infrastructure.entity.HashtagEntity;
 import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
 import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityRepository;
+import com.cosmost.project.cosmost.infrastructure.repository.HashtagEntityRepository;
 import com.cosmost.project.cosmost.infrastructure.repository.PlaceDetailEntityRepository;
 import com.cosmost.project.cosmost.model.Course;
+import com.cosmost.project.cosmost.model.Hashtag;
 import com.cosmost.project.cosmost.model.PlaceDetail;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
+import com.cosmost.project.cosmost.requestbody.CreateHashtagRequest;
 import com.cosmost.project.cosmost.requestbody.CreatePlaceDetailRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
@@ -31,11 +35,14 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     private final CourseEntityRepository courseEntityRepository;
     private final PlaceDetailEntityRepository placeDetailEntityRepository;
+    private final HashtagEntityRepository hashtagEntityRepository;
 
     @Autowired
-    public CosmostsServiceImpl(CourseEntityRepository courseEntityRepository, PlaceDetailEntityRepository placeDetailEntityRepository) {
+    public CosmostsServiceImpl(CourseEntityRepository courseEntityRepository, PlaceDetailEntityRepository placeDetailEntityRepository,
+                               HashtagEntityRepository hashtagEntityRepository) {
         this.courseEntityRepository = courseEntityRepository;
         this.placeDetailEntityRepository = placeDetailEntityRepository;
+        this.hashtagEntityRepository = hashtagEntityRepository;
     }
 
     // 코스 등록
@@ -47,6 +54,10 @@ public class CosmostsServiceImpl implements CosmostsService {
 
         for(CreatePlaceDetailRequest placeDetailRequest : createCourseRequest.getCreatePlaceDetailRequestList()) {
             placeDetailEntityRepository.save(placeDetailRequest.createDtoToEntity(placeDetailRequest, courseEntity));
+        }
+
+        for(CreateHashtagRequest hashtagRequest : createCourseRequest.getCreateHashtagRequestList()) {
+            hashtagEntityRepository.save(hashtagRequest.createDtoToEntity(hashtagRequest, courseEntity));
         }
     }
 
@@ -64,13 +75,22 @@ public class CosmostsServiceImpl implements CosmostsService {
             courseEntityRepository.save(courseEntity);
 
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
+            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findAllByCourse(courseEntityCheck.get());
 
             for (PlaceDetailEntity temp : placeDetailEntityList) {
                 placeDetailEntityRepository.deleteById(temp.getId());
             }
 
+            for (HashtagEntity temp : hashtagEntityList) {
+                hashtagEntityRepository.deleteById(temp.getId());
+            }
+
             for (CreatePlaceDetailRequest placeDetailRequest : updateCourseRequest.getCreatePlaceDetailRequestList()) {
                 placeDetailEntityRepository.save(placeDetailRequest.createDtoToEntity(placeDetailRequest, courseEntity));
+            }
+
+            for (CreateHashtagRequest hashtagRequest : updateCourseRequest.getCreateHashtagRequestList()) {
+                hashtagEntityRepository.save(hashtagRequest.createDtoToEntity(hashtagRequest, courseEntity));
             }
         }
     }
@@ -86,9 +106,14 @@ public class CosmostsServiceImpl implements CosmostsService {
 
         if(courseEntityCheck.isPresent()) {
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
+            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findAllByCourse(courseEntityCheck.get());
 
             for (PlaceDetailEntity temp : placeDetailEntityList) {
                 placeDetailEntityRepository.deleteById(temp.getId());
+            }
+
+            for (HashtagEntity temp : hashtagEntityList) {
+                hashtagEntityRepository.deleteById(temp.getId());
             }
 
             courseEntityRepository.deleteById(id);
@@ -108,8 +133,13 @@ public class CosmostsServiceImpl implements CosmostsService {
 
 
         courseEntityList.forEach(courseEntity -> {
+
+
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(courseEntity.getId());
             List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
+
+            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(courseEntity.getId());
+            List<Hashtag> hashtagList = new ArrayList<>();
 
             placeDetailEntityList.forEach(placeDetailEntity -> {
                 readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
@@ -119,12 +149,21 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .build());
             });
 
+            hashtagEntityList.forEach(hashtagEntity -> {
+                hashtagList.add(Hashtag.builder()
+                        .id(hashtagEntity.getId())
+                        .keyword(hashtagEntity.getKeyword())
+                        .build());
+            });
+
+
             courseList.add(ReadCourseResponse.builder()
                             .id(courseEntity.getId())
                             .authorId(courseEntity.getAuthorId())
                             .courseTitle(courseEntity.getCourseTitle())
                             .courseStatus(courseEntity.getCourseStatus())
                             .readPlaceDetailResponseList(readPlaceDetailResponseList)
+                            .hashtagList(hashtagList)
                     .build());
         });
 
@@ -145,6 +184,9 @@ public class CosmostsServiceImpl implements CosmostsService {
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<PlaceDetail> placeDetailList = new ArrayList<>();
 
+            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findAllByCourse(courseEntityCheck.get());
+            List<Hashtag> hashtagList = new ArrayList<>();
+
             placeDetailEntityList.forEach(placeDetailEntity -> {
                 placeDetailList.add(PlaceDetail.builder()
                         .id(placeDetailEntity.getId())
@@ -155,6 +197,13 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .build());
             });
 
+            hashtagEntityList.forEach(hashtagEntity -> {
+                hashtagList.add(Hashtag.builder()
+                        .id(hashtagEntity.getId())
+                        .keyword(hashtagEntity.getKeyword())
+                        .build());
+            });
+
             return Course.builder()
                     .id(courseEntityCheck.get().getId())
                     .authorId(courseEntityCheck.get().getAuthorId())
@@ -162,6 +211,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .courseComment(courseEntityCheck.get().getCourseComment())
                     .courseStatus(courseEntityCheck.get().getCourseStatus())
                     .placeDetailList(placeDetailList)
+                    .hashtagList(hashtagList)
                     .build();
         }
 
