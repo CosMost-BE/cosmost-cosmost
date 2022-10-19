@@ -14,10 +14,14 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private final LocationCategoryRepository locationCategoryRepository;
+    private final ThemeCategoryRepository themeCategoryRepository;
+
 
     @Autowired
-    public CategoryServiceImpl(LocationCategoryRepository locationCategoryRepository) {
+    public CategoryServiceImpl(LocationCategoryRepository locationCategoryRepository,
+                               ThemeCategoryRepository themeCategoryRepository) {
         this.locationCategoryRepository = locationCategoryRepository;
+        this.themeCategoryRepository = themeCategoryRepository;
 
     }
 
@@ -25,5 +29,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<LocationCategoryEntity> readAllLocationCategory() {
         return locationCategoryRepository.findAll();
+    }
+    
+    // 테마별 카테고리 전체 조회
+    @Override
+    public List<ThemeCategoryEntity> readAllThemeCategory() {
+        return themeCategoryRepository.findAll();
+
     }
 }
