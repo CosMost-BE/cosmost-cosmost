@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoryListRepository extends JpaRepository<CategoryListEntity, Long> {
-//    List<CategoryListEntity> findAllByCourse(CourseEntity courseEntity);
     List<CategoryListEntity> findByCourse_Id(Long id);
 
 }

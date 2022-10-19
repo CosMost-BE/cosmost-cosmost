@@ -1,10 +1,12 @@
 package com.cosmost.project.cosmost.controller;
 
 import com.cosmost.project.cosmost.exception.QueryNotfound;
+import com.cosmost.project.cosmost.infrastructure.entity.LocationCategoryEntity;
 import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
 import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
+import com.cosmost.project.cosmost.service.CategoryService;
 import com.cosmost.project.cosmost.service.CosmostsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,12 @@ import java.util.List;
 public class CourseController {
 
     private final CosmostsService cosmostsService;
+    private final CategoryService categoryService;
 
     @Autowired
-    public CourseController(CosmostsService cosmostsService) {
+    public CourseController(CosmostsService cosmostsService, CategoryService categoryService) {
         this.cosmostsService = cosmostsService;
+        this.categoryService = categoryService;
     }
 
     // 코스 등록
@@ -65,10 +69,14 @@ public class CourseController {
         if(String.valueOf(filter).equals("auth")) {
             List<ReadCourseResponse> course = cosmostsService.readCourseByAuthId();
             return ResponseEntity.status(200).body(course);
+        } else if (String.valueOf(filter).equals("all") && String.valueOf(category).equals("location")) {
+            List<LocationCategoryEntity> locationCategoryEntityList = categoryService.readAllLocationCategory();
+            return ResponseEntity.status(200).body(locationCategoryEntityList);
         } else {
             throw new QueryNotfound();
         }
     }
+
 
     // 코스 한 개 상세 조회
     @GetMapping("/{id}")
@@ -77,5 +85,7 @@ public class CourseController {
 
         return ResponseEntity.status(200).body(course);
     }
+
+
 
 }
