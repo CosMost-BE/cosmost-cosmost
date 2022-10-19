@@ -37,6 +37,8 @@ public class CreateCourseRequest {
     @Valid
     private List<CreatePlaceImgRequest> createPlaceImgRequestList;
 
+    private List<CreateCategoryListRequest> createCategoryListRequestList;
+
     public CourseEntity createDtoToEntity(CreateCourseRequest createCourseRequest) {
         return CourseEntity.builder()
                 .authorId(createCourseRequest.getAuthorId())
