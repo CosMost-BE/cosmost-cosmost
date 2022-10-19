@@ -12,5 +12,6 @@ import java.util.List;
 
 public interface CategoryService {
     List<LocationCategoryEntity> readAllLocationCategory();
+    List<ThemeCategoryEntity> readAllThemeCategory();
 
 }

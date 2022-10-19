@@ -2,6 +2,7 @@ package com.cosmost.project.cosmost.controller;
 
 import com.cosmost.project.cosmost.exception.QueryNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.LocationCategoryEntity;
+import com.cosmost.project.cosmost.infrastructure.entity.ThemeCategoryEntity;
 import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.requestbody.CreateCourseRequest;
 import com.cosmost.project.cosmost.requestbody.UpdateCourseRequest;
@@ -72,6 +73,9 @@ public class CourseController {
         } else if (String.valueOf(filter).equals("all") && String.valueOf(category).equals("location")) {
             List<LocationCategoryEntity> locationCategoryEntityList = categoryService.readAllLocationCategory();
             return ResponseEntity.status(200).body(locationCategoryEntityList);
+        }  else if (String.valueOf(filter).equals("all") && String.valueOf(category).equals("theme")) {
+            List<ThemeCategoryEntity> themeCategoryEntityList = categoryService.readAllThemeCategory();
+            return ResponseEntity.status(200).body(themeCategoryEntityList);
         } else {
             throw new QueryNotfound();
         }
