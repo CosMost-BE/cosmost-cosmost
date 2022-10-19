@@ -37,10 +37,10 @@ public class UpdateCourseRequest {
     private List<UpdateCategoryListRequest> updateCategoryListRequestList;
 
 
-    public CourseEntity updateDtoToEntity(Long id, UpdateCourseRequest updateCourseRequest) {
+    public CourseEntity updateDtoToEntity(Long id, UpdateCourseRequest updateCourseRequest, Long authorId) {
         return CourseEntity.builder()
                 .id(id)
-                .authorId(updateCourseRequest.getAuthorId())
+                .authorId(authorId)
                 .courseTitle(updateCourseRequest.getCourseTitle())
                 .courseComment(updateCourseRequest.getCourseComment())
                 .courseStatus(updateCourseRequest.getCourseStatus())

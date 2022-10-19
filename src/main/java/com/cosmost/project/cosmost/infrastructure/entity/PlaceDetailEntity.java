@@ -19,7 +19,12 @@ public class PlaceDetailEntity{
     private String placeName;
 
     @NotNull
-    private String placeUrl;
+    @Column(name = "place_x_coordinate")
+    private double placeXCoordinate;
+
+    @NotNull
+    @Column(name = "place_y_coordinate")
+    private double placeYCoordinate;
 
     @NotNull
     private int placeOrder;
@@ -31,11 +36,12 @@ public class PlaceDetailEntity{
     private CourseEntity course;
 
     @Builder
-    public PlaceDetailEntity(Long id, String placeName, String placeUrl, int placeOrder,
-                             String placeComment, CourseEntity course) {
+    public PlaceDetailEntity(Long id, String placeName, double placeXCoordinate, double placeYCoordinate,
+                             int placeOrder, String placeComment, CourseEntity course) {
         this.id = id;
-        this.placeUrl = placeUrl;
         this.placeName = placeName;
+        this.placeXCoordinate = placeXCoordinate;
+        this.placeYCoordinate = placeYCoordinate;
         this.placeOrder = placeOrder;
         this.placeComment = placeComment;
         this.course = course;

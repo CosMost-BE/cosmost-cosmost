@@ -39,9 +39,9 @@ public class CreateCourseRequest {
 
     private List<CreateCategoryListRequest> createCategoryListRequestList;
 
-    public CourseEntity createDtoToEntity(CreateCourseRequest createCourseRequest) {
+    public CourseEntity createDtoToEntity(CreateCourseRequest createCourseRequest, Long authorId) {
         return CourseEntity.builder()
-                .authorId(createCourseRequest.getAuthorId())
+                .authorId(authorId)
                 .courseTitle(createCourseRequest.getCourseTitle())
                 .courseComment(createCourseRequest.getCourseComment())
                 .courseStatus(CourseStatus.ACTIVE)

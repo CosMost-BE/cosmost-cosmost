@@ -1,3 +1,5 @@
+server:
+  port: 9002
 spring:
   jpa:
     properties:
@@ -19,4 +21,7 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
+jwt:
+  tokenValidTime: 1800000
+  secret: COS-MOST-TEAM-SECRET-KEY
 

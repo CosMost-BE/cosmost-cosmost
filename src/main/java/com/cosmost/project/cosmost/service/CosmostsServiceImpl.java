@@ -11,6 +11,7 @@ import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
 import com.cosmost.project.cosmost.responsebody.ReadPlaceDetailResponse;
 import com.cosmost.project.cosmost.responsebody.ReadPlaceImgResponse;
 import com.cosmost.project.cosmost.util.AmazonS3ResourceStorage;
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +21,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,7 +48,8 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     @Autowired
     public CosmostsServiceImpl(CourseEntityRepository courseEntityRepository, PlaceDetailEntityRepository placeDetailEntityRepository,
@@ -69,7 +73,16 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Transactional
     @Override
     public void createCourse(CreateCourseRequest createCourseRequest, List<MultipartFile> file) {
-        CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest);
+        // header 내에 Authorization으로 있는 기본키를 반환
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        String token = request.getHeader("Authorization");
+
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
+        CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest, authorId);
         courseEntityRepository.save(courseEntity);
 
         for(CreatePlaceDetailRequest placeDetailRequest : createCourseRequest.getCreatePlaceDetailRequestList()) {
@@ -106,13 +119,20 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Transactional
     @Override
     public void updateCourse(Long id, UpdateCourseRequest updateCourseRequest, List<MultipartFile> file) {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
 
+        String token = request.getHeader("Authorization");
+
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        Long authorId = Long.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+        log.info(String.valueOf(authorId));
         Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
                 courseEntityRepository.findById(id).orElseThrow(
                         CourseIdNotfound::new));
 
         if (courseEntityCheck.isPresent()) {
-            CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(id, updateCourseRequest);
+            CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(id, updateCourseRequest, authorId);
             courseEntityRepository.save(courseEntity);
 
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
@@ -172,6 +192,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                 courseEntityRepository.findById(id).orElseThrow(
                         CourseIdNotfound::new));
 
+
         if(courseEntityCheck.isPresent()) {
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findAllByCourse(courseEntityCheck.get());
@@ -204,10 +225,14 @@ public class CosmostsServiceImpl implements CosmostsService {
     // 작성한 코스 목록 조회
     @Override
     public List<ReadCourseResponse> readCourseByAuthId() {
-        // header 내에 Authorization으로 있는 기본키를 반환
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long authorId = Long.parseLong(request.getHeader("Authorization"));
+
+        String token = request.getHeader("Authorization");
+
+        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
 
         List<CourseEntity> courseEntityList = courseEntityRepository.findAllByAuthorId(authorId);
         List<ReadCourseResponse> courseList = new ArrayList<>();
@@ -303,7 +328,8 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .placeName(placeDetailEntity.getPlaceName())
                         .placeComment(placeDetailEntity.getPlaceComment())
                         .placeOrder(placeDetailEntity.getPlaceOrder())
-                        .placeUrl(placeDetailEntity.getPlaceUrl())
+                        .placeXCoordinate(placeDetailEntity.getPlaceXCoordinate())
+                        .placeYCoordinate(placeDetailEntity.getPlaceYCoordinate())
                         .build());
             });
 
