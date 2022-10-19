@@ -5,10 +5,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.cosmost.project.cosmost.exception.CourseIdNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.*;
 import com.cosmost.project.cosmost.infrastructure.repository.*;
-import com.cosmost.project.cosmost.model.Course;
-import com.cosmost.project.cosmost.model.Hashtag;
-import com.cosmost.project.cosmost.model.PlaceDetail;
-import com.cosmost.project.cosmost.model.PlaceImg;
+import com.cosmost.project.cosmost.model.*;
 import com.cosmost.project.cosmost.requestbody.*;
 import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
 import com.cosmost.project.cosmost.responsebody.ReadPlaceDetailResponse;
@@ -155,6 +152,14 @@ public class CosmostsServiceImpl implements CosmostsService {
 
                 placeImgRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest));
             }
+
+            for(UpdateCategoryListRequest categoryListRequest : updateCourseRequest.getUpdateCategoryListRequestList()) {
+                Optional<LocationCategoryEntity> locationCategory = locationCategoryRepository.findById(categoryListRequest.getLocationCategory());
+                Optional<ThemeCategoryEntity> themeCategory = themeCategoryRepository.findById(categoryListRequest.getThemeCategory());
+
+                categoryListRepository.save(categoryListRequest.updateDtoToEntity(courseEntity, locationCategory.get(), themeCategory.get(), categoryListRequest));
+            }
+
         }
     }
 
@@ -171,6 +176,7 @@ public class CosmostsServiceImpl implements CosmostsService {
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<PlaceImgEntity> placeImgEntityList = placeImgRepository.findAllByCourse(courseEntityCheck.get());
+            List<CategoryListEntity> categoryListEntity = categoryListRepository.findByCourse_Id(courseEntityCheck.get().getId());
 
             for (PlaceDetailEntity temp : placeDetailEntityList) {
                 placeDetailEntityRepository.deleteById(temp.getId());
@@ -185,6 +191,10 @@ public class CosmostsServiceImpl implements CosmostsService {
                 // key: 삭제를 원하는 객체, 이때 모든 경로를 넣어줘야 한다. (ex. /v1/v2/object.jpg)
 
                 placeImgRepository.deleteById(temp.getId());
+            }
+
+            for (CategoryListEntity temp : categoryListEntity) {
+                categoryListRepository.deleteById(temp.getId());
             }
 
             courseEntityRepository.deleteById(id);
@@ -215,6 +225,10 @@ public class CosmostsServiceImpl implements CosmostsService {
             List<PlaceImgEntity> placeImgEntityList = placeImgRepository.findByCourse_Id(courseEntity.getId());
             List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
 
+            List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntity.getId());
+            List<CategoryList> categoryLists = new ArrayList<>();
+
+
             placeDetailEntityList.forEach(placeDetailEntity -> {
                 readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
                         .id(placeDetailEntity.getId())
@@ -237,6 +251,14 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .build());
             });
 
+            categoryListEntityList.forEach(categoryListEntity -> {
+                categoryLists.add(CategoryList.builder()
+                        .id(categoryListEntity.getId())
+                        .locationCategoryName(categoryListEntity.getLocationCategory().getLocationCategoryName())
+                        .themeCategoryName(categoryListEntity.getThemeCategory().getThemeCategoryName())
+                        .build());
+            });
+
             courseList.add(ReadCourseResponse.builder()
                     .id(courseEntity.getId())
                     .authorId(courseEntity.getAuthorId())
@@ -245,6 +267,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .hashtagList(hashtagList)
                     .readPlaceImgResponseList(readPlaceImgResponseList)
+                    .categoryLists(categoryLists)
                     .build());
         });
 
@@ -271,6 +294,8 @@ public class CosmostsServiceImpl implements CosmostsService {
             List<PlaceImgEntity> placeImgEntityList = placeImgRepository.findAllByCourse(courseEntityCheck.get());
             List<PlaceImg> placeImgList = new ArrayList<>();
 
+            List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntityCheck.get().getId());
+            List<CategoryList> categoryLists = new ArrayList<>();
 
             placeDetailEntityList.forEach(placeDetailEntity -> {
                 placeDetailList.add(PlaceDetail.builder()
@@ -298,6 +323,14 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .build());
             });
 
+            categoryListEntityList.forEach(categoryListEntity -> {
+                categoryLists.add(CategoryList.builder()
+                        .id(categoryListEntity.getId())
+                        .locationCategoryName(categoryListEntity.getLocationCategory().getLocationCategoryName())
+                        .themeCategoryName(categoryListEntity.getThemeCategory().getThemeCategoryName())
+                        .build());
+            });
+
             return Course.builder()
                     .id(courseEntityCheck.get().getId())
                     .authorId(courseEntityCheck.get().getAuthorId())
@@ -307,6 +340,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .placeDetailList(placeDetailList)
                     .hashtagList(hashtagList)
                     .placeImgList(placeImgList)
+                    .categoryLists(categoryLists)
                     .build();
         }
 

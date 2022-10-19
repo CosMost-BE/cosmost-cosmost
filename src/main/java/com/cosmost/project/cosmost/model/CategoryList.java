@@ -18,16 +18,13 @@ public class CategoryList {
 
     private Long id;
 
-    private Long course;
-    private Long locationCategory;
-    private Long themeCategory;
+    private String locationCategoryName;
+    private String themeCategoryName;
 
     public CategoryList(CategoryListEntity categoryListEntity) {
         this.id = categoryListEntity.getId();
-        this.course = categoryListEntity.getCourse().getId();
-        this.locationCategory = categoryListEntity.getLocationCategory().getId();
-        this.themeCategory = categoryListEntity.getThemeCategory().getId();
-
+        this.locationCategoryName = categoryListEntity.getLocationCategory().getLocationCategoryName();
+        this.themeCategoryName = categoryListEntity.getThemeCategory().getThemeCategoryName();
     }
 
 }
