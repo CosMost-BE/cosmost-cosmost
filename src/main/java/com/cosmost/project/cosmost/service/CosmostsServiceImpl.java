@@ -3,14 +3,8 @@ package com.cosmost.project.cosmost.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.cosmost.project.cosmost.exception.CourseIdNotfound;
-import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
-import com.cosmost.project.cosmost.infrastructure.entity.HashtagEntity;
-import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
-import com.cosmost.project.cosmost.infrastructure.entity.PlaceImgEntity;
-import com.cosmost.project.cosmost.infrastructure.repository.CourseEntityRepository;
-import com.cosmost.project.cosmost.infrastructure.repository.HashtagEntityRepository;
-import com.cosmost.project.cosmost.infrastructure.repository.PlaceDetailEntityRepository;
-import com.cosmost.project.cosmost.infrastructure.repository.PlaceImgRepository;
+import com.cosmost.project.cosmost.infrastructure.entity.*;
+import com.cosmost.project.cosmost.infrastructure.repository.*;
 import com.cosmost.project.cosmost.model.Course;
 import com.cosmost.project.cosmost.model.Hashtag;
 import com.cosmost.project.cosmost.model.PlaceDetail;
@@ -44,6 +38,10 @@ public class CosmostsServiceImpl implements CosmostsService {
     private final HashtagEntityRepository hashtagEntityRepository;
     private final PlaceImgRepository placeImgRepository;
     private final AmazonS3ResourceStorage amazonS3ResourceStorage;
+    private final CategoryListRepository categoryListRepository;
+    private final LocationCategoryRepository locationCategoryRepository;
+    private final ThemeCategoryRepository themeCategoryRepository;
+
 
     private final AmazonS3 amazonS3;
 
@@ -55,13 +53,19 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Autowired
     public CosmostsServiceImpl(CourseEntityRepository courseEntityRepository, PlaceDetailEntityRepository placeDetailEntityRepository,
                                HashtagEntityRepository hashtagEntityRepository, PlaceImgRepository placeImgRepository,
-                               AmazonS3ResourceStorage amazonS3ResourceStorage, AmazonS3 amazonS3) {
+                               AmazonS3ResourceStorage amazonS3ResourceStorage, AmazonS3 amazonS3,
+                               CategoryListRepository categoryListRepository, LocationCategoryRepository locationCategoryRepository,
+                               ThemeCategoryRepository themeCategoryRepository) {
         this.courseEntityRepository = courseEntityRepository;
         this.placeDetailEntityRepository = placeDetailEntityRepository;
         this.hashtagEntityRepository = hashtagEntityRepository;
         this.placeImgRepository = placeImgRepository;
         this.amazonS3ResourceStorage = amazonS3ResourceStorage;
         this.amazonS3 = amazonS3;
+        this.categoryListRepository = categoryListRepository;
+        this.locationCategoryRepository = locationCategoryRepository;
+        this.themeCategoryRepository = themeCategoryRepository;
+
     }
 
     // 코스 등록
@@ -89,6 +93,15 @@ public class CosmostsServiceImpl implements CosmostsService {
 
             placeImgRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest));
         }
+
+
+        for(CreateCategoryListRequest categoryListRequest : createCourseRequest.getCreateCategoryListRequestList()) {
+            Optional<LocationCategoryEntity> locationCategory = locationCategoryRepository.findById(categoryListRequest.getLocationCategory());
+            Optional<ThemeCategoryEntity> themeCategory = themeCategoryRepository.findById(categoryListRequest.getThemeCategory());
+
+            categoryListRepository.save(categoryListRequest.createDtoToEntity(courseEntity, locationCategory.get(), themeCategory.get()));
+        }
+
 
     }
 
@@ -225,13 +238,13 @@ public class CosmostsServiceImpl implements CosmostsService {
             });
 
             courseList.add(ReadCourseResponse.builder()
-                            .id(courseEntity.getId())
-                            .authorId(courseEntity.getAuthorId())
-                            .courseTitle(courseEntity.getCourseTitle())
-                            .courseStatus(courseEntity.getCourseStatus())
-                            .readPlaceDetailResponseList(readPlaceDetailResponseList)
-                            .hashtagList(hashtagList)
-                            .readPlaceImgResponseList(readPlaceImgResponseList)
+                    .id(courseEntity.getId())
+                    .authorId(courseEntity.getAuthorId())
+                    .courseTitle(courseEntity.getCourseTitle())
+                    .courseStatus(courseEntity.getCourseStatus())
+                    .readPlaceDetailResponseList(readPlaceDetailResponseList)
+                    .hashtagList(hashtagList)
+                    .readPlaceImgResponseList(readPlaceImgResponseList)
                     .build());
         });
 
