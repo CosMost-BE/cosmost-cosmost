@@ -34,6 +34,9 @@ public class UpdateCourseRequest {
     @Valid
     private List<CreateHashtagRequest> createHashtagRequestList;
 
+    private List<UpdateCategoryListRequest> updateCategoryListRequestList;
+
+
     public CourseEntity updateDtoToEntity(Long id, UpdateCourseRequest updateCourseRequest) {
         return CourseEntity.builder()
                 .id(id)

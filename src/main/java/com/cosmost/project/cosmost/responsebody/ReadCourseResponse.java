@@ -1,6 +1,7 @@
 package com.cosmost.project.cosmost.responsebody;
 
 import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
+import com.cosmost.project.cosmost.model.CategoryList;
 import com.cosmost.project.cosmost.model.Hashtag;
 import com.cosmost.project.cosmost.model.PlaceDetail;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class ReadCourseResponse {
     private List<ReadPlaceDetailResponse> readPlaceDetailResponseList;
     private List<Hashtag> hashtagList;
     private List<ReadPlaceImgResponse> readPlaceImgResponseList;
+    private List<CategoryList> categoryLists;
 
 
 
