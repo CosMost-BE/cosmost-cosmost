@@ -78,9 +78,8 @@ public class CosmostsServiceImpl implements CosmostsService {
                 RequestContextHolder.currentRequestAttributes()).getRequest();
 
         String token = request.getHeader("Authorization");
-
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
 
         CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest, authorId);
         courseEntityRepository.save(courseEntity);
@@ -123,10 +122,9 @@ public class CosmostsServiceImpl implements CosmostsService {
                 RequestContextHolder.currentRequestAttributes()).getRequest();
 
         String token = request.getHeader("Authorization");
+        Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-        Long authorId = Long.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
-        log.info(String.valueOf(authorId));
+
         Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
                 courseEntityRepository.findById(id).orElseThrow(
                         CourseIdNotfound::new));
@@ -192,7 +190,6 @@ public class CosmostsServiceImpl implements CosmostsService {
                 courseEntityRepository.findById(id).orElseThrow(
                         CourseIdNotfound::new));
 
-
         if(courseEntityCheck.isPresent()) {
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findAllByCourse(courseEntityCheck.get());
@@ -229,8 +226,6 @@ public class CosmostsServiceImpl implements CosmostsService {
                 RequestContextHolder.currentRequestAttributes()).getRequest();
 
         String token = request.getHeader("Authorization");
-
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
         Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
 
