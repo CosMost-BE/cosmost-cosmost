@@ -80,7 +80,6 @@ public class CosmostsServiceImpl implements CosmostsService {
         String token = request.getHeader("Authorization");
         Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-
         CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest, authorId);
         courseEntityRepository.save(courseEntity);
 
