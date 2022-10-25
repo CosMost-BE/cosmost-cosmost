@@ -27,16 +27,20 @@ public class PlaceImgEntity {
     @NotNull
     private String placeImgUrl;
 
+    @NotNull
+    private int placeImgOrder;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private CourseEntity course;
 
     @Builder
     public PlaceImgEntity(Long id, String placeImgOriginName, String placeImgSaveName,
-                          String placeImgUrl, CourseEntity course) {
+                          String placeImgUrl, int placeImgOrder, CourseEntity course) {
         this.id = id;
         this.placeImgOriginName = placeImgOriginName;
         this.placeImgSaveName = placeImgSaveName;
         this.placeImgUrl = placeImgUrl;
+        this.placeImgOrder = placeImgOrder;
         this.course = course;
     }
 

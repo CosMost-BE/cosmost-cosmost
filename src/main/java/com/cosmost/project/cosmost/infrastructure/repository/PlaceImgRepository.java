@@ -10,6 +10,6 @@ import java.util.List;
 public interface PlaceImgRepository extends JpaRepository<PlaceImgEntity, Long> {
 
     List<PlaceImgEntity> findAllByCourse(CourseEntity courseEntity);
-    List<PlaceImgEntity> findByCourse_Id(Long id);
+    List<PlaceImgEntity> findByCourse_IdAndAndPlaceImgOrder(Long id, int count);
 
 }

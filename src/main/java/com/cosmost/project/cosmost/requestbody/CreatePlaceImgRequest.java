@@ -25,13 +25,16 @@ public class CreatePlaceImgRequest {
     @NotBlank(message = "장소 이미지 저장 URL은 필수 입력 값입니다.")
     private String placeImgUrl;
 
+    private int placeImgOrder;
+
     private Long course;
 
-    public PlaceImgEntity createDtoToEntity(CourseEntity courseEntity, FileInfoRequest fileInfoRequest) {
+    public PlaceImgEntity createDtoToEntity(CourseEntity courseEntity, FileInfoRequest fileInfoRequest, int count) {
         return PlaceImgEntity.builder()
                 .placeImgOriginName(fileInfoRequest.getName())
                 .placeImgSaveName(fileInfoRequest.getRemotePath())
                 .placeImgUrl(fileInfoRequest.getUrl())
+                .placeImgOrder(count)
                 .course(courseEntity)
                 .build();
     }

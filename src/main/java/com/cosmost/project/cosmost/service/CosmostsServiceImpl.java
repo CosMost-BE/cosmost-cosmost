@@ -80,6 +80,8 @@ public class CosmostsServiceImpl implements CosmostsService {
         String token = request.getHeader("Authorization");
         Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
+        int count = 0;
+
         CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest, authorId);
         courseEntityRepository.save(courseEntity);
 
@@ -99,7 +101,9 @@ public class CosmostsServiceImpl implements CosmostsService {
             amazonS3ResourceStorage.store(fileInfoRequest, temp);
             returnDto.add(fileInfoRequest);
 
-            placeImgRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest));
+            count += 1;
+
+            placeImgRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest, count));
         }
 
 
@@ -123,6 +127,7 @@ public class CosmostsServiceImpl implements CosmostsService {
         String token = request.getHeader("Authorization");
         Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
+        int count = 0;
 
         Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
                 courseEntityRepository.findById(id).orElseThrow(
@@ -167,7 +172,9 @@ public class CosmostsServiceImpl implements CosmostsService {
                 amazonS3ResourceStorage.store(fileInfoRequest, temp);
                 returnDto.add(fileInfoRequest);
 
-                placeImgRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest));
+                count += 1;
+
+                placeImgRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest, count));
             }
 
             for(UpdateCategoryListRequest categoryListRequest : updateCourseRequest.getUpdateCategoryListRequestList()) {
@@ -241,7 +248,7 @@ public class CosmostsServiceImpl implements CosmostsService {
             List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(courseEntity.getId());
             List<Hashtag> hashtagList = new ArrayList<>();
 
-            List<PlaceImgEntity> placeImgEntityList = placeImgRepository.findByCourse_Id(courseEntity.getId());
+            List<PlaceImgEntity> placeImgEntityList = placeImgRepository.findByCourse_IdAndAndPlaceImgOrder(courseEntity.getId(), 1);
             List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
 
             List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntity.getId());
@@ -266,6 +273,7 @@ public class CosmostsServiceImpl implements CosmostsService {
             placeImgEntityList.forEach(placeImgEntity -> {
                 readPlaceImgResponseList.add(ReadPlaceImgResponse.builder()
                         .id(placeImgEntity.getId())
+                        .placeImgOrder(placeImgEntity.getPlaceImgOrder())
                         .placeImgUrl(placeImgEntity.getPlaceImgUrl())
                         .build());
             });
