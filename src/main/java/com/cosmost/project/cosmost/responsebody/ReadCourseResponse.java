@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -21,6 +22,8 @@ public class ReadCourseResponse {
     private Long authorId;
     private String courseTitle;
     private CourseStatus courseStatus;
+    private LocalDate createAt;
+
 
     private List<ReadPlaceDetailResponse> readPlaceDetailResponseList;
     private List<Hashtag> hashtagList;
