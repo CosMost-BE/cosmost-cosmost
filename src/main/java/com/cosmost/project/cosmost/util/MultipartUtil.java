@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Component
 public class MultipartUtil {
-    private static final String BASE_DIR = System.getProperty("user.home") + "/temp";
+    private static final String BASE_DIR = System.getProperty("user.dir");
 
     public static String getBaseDir() {
         return BASE_DIR;
@@ -58,7 +58,7 @@ public class MultipartUtil {
      * @return
      */
     public static String createLocalPath(String fileId, String format) {
-        return String.format("%s/imgs/%s.%s", BASE_DIR, fileId, format);
+        return String.format("%s/%s.%s", BASE_DIR, fileId, format);
     }
 
     /**

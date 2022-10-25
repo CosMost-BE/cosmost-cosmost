@@ -349,6 +349,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .placeImgOriginName(placeImgEntity.getPlaceImgOriginName())
                         .placeImgSaveName(placeImgEntity.getPlaceImgSaveName())
                         .placeImgUrl(placeImgEntity.getPlaceImgUrl())
+                        .placeImgOrder(placeImgEntity.getPlaceImgOrder())
                         .build());
             });
 
