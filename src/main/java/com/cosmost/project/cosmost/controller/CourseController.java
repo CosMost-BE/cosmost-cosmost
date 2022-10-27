@@ -48,6 +48,9 @@ public class CourseController {
     public ResponseEntity<?> updateCourse(@PathVariable Long id,
                                           @Valid @RequestPart UpdateCourseRequest updateCourseRequest,
                                           @RequestPart(value="file", required = false) List<MultipartFile> file) {
+
+//        System.out.println("#####################"+file.get(0));
+
         cosmostsService.updateCourse(id,updateCourseRequest, file);
 
         return ResponseEntity.ok("코스가 수정되었습니다.");

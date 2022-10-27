@@ -34,7 +34,6 @@ public class CreateCourseRequest {
     @Valid
     private List<CreateHashtagRequest> createHashtagRequestList;
 
-    @Valid
     private List<CreatePlaceImgRequest> createPlaceImgRequestList;
 
     private List<CreateCategoryListRequest> createCategoryListRequestList;

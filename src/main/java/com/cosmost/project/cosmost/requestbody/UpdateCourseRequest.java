@@ -36,6 +36,9 @@ public class UpdateCourseRequest {
 
     private List<UpdateCategoryListRequest> updateCategoryListRequestList;
 
+    private List<Long> deletePlaceImgRequestList;
+    private List<CreatePlaceImgRequest> createPlaceImgRequestList;
+    private List<UpdatePlaceImgRequest> updatePlaceImgRequestList;
 
     public CourseEntity updateDtoToEntity(Long id, UpdateCourseRequest updateCourseRequest, Long authorId) {
         return CourseEntity.builder()
