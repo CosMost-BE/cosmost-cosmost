@@ -212,9 +212,6 @@ public class CosmostsServiceImpl implements CosmostsService {
             }
 
             for (PlaceImgEntity temp : placeImgEntityList) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, temp.getPlaceImgSaveName()));
-                // key: 삭제를 원하는 객체, 이때 모든 경로를 넣어줘야 한다. (ex. /v1/v2/object.jpg)
-
                 placeImgEntityRepository.deleteById(temp.getId());
             }
 
