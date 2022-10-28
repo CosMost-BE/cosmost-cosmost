@@ -1,6 +1,8 @@
 server:
   port: 9002
 spring:
+  application:
+    name: cosmost-service
   jpa:
     properties:
       hibernate:
@@ -14,7 +16,12 @@ spring:
       matching-strategy: ant_path_matcher
   profiles:
     include: aws, local-db
-
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
 logging:
   level:
     com:
