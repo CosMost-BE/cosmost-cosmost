@@ -15,11 +15,13 @@ import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.PageRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -323,6 +325,14 @@ public class CosmostsServiceImpl implements CosmostsService {
             List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntityCheck.get().getId());
             List<CategoryList> categoryLists = new ArrayList<>();
 
+
+            hashtagEntityList.forEach(hashtagEntity -> {
+                hashtagList.add(Hashtag.builder()
+                        .id(hashtagEntity.getId())
+                        .keyword(hashtagEntity.getKeyword())
+                        .build());
+            });
+
             placeDetailEntityList.forEach(placeDetailEntity -> {
                 placeDetailList.add(PlaceDetail.builder()
                         .id(placeDetailEntity.getId())
@@ -334,12 +344,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .build());
             });
 
-            hashtagEntityList.forEach(hashtagEntity -> {
-                hashtagList.add(Hashtag.builder()
-                        .id(hashtagEntity.getId())
-                        .keyword(hashtagEntity.getKeyword())
-                        .build());
-            });
+
 
             placeImgEntityList.forEach(placeImgEntity -> {
                 placeImgList.add(PlaceImg.builder()
@@ -374,6 +379,78 @@ public class CosmostsServiceImpl implements CosmostsService {
         }
 
         return null;
+    }
+
+    // 코스 전체 목록 조회
+    @Override
+    public List<ReadCourseResponse> readCourseAll(Pageable pageable) {
+
+        Slice<CourseEntity> courseEntityList = courseEntityRepository.findAll(pageable);
+        List<ReadCourseResponse> courseList = new ArrayList<>();
+
+
+        courseEntityList.forEach(courseEntity -> {
+
+
+            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(courseEntity.getId());
+            List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
+
+            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(courseEntity.getId());
+            List<Hashtag> hashtagList = new ArrayList<>();
+
+            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(courseEntity.getId(), 0);
+            List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
+
+            List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntity.getId());
+            List<CategoryList> categoryLists = new ArrayList<>();
+
+
+            placeDetailEntityList.forEach(placeDetailEntity -> {
+                readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
+                        .id(placeDetailEntity.getId())
+                        .placeName(placeDetailEntity.getPlaceName())
+                        .placeOrder(placeDetailEntity.getPlaceOrder())
+                        .build());
+            });
+
+            hashtagEntityList.forEach(hashtagEntity -> {
+                hashtagList.add(Hashtag.builder()
+                        .id(hashtagEntity.getId())
+                        .keyword(hashtagEntity.getKeyword())
+                        .build());
+            });
+
+            placeImgEntityList.forEach(placeImgEntity -> {
+                readPlaceImgResponseList.add(ReadPlaceImgResponse.builder()
+                        .id(placeImgEntity.getId())
+                        .placeImgOrder(placeImgEntity.getPlaceImgOrder())
+                        .placeImgUrl(placeImgEntity.getPlaceImgUrl())
+                        .build());
+            });
+
+            categoryListEntityList.forEach(categoryListEntity -> {
+                categoryLists.add(CategoryList.builder()
+                        .id(categoryListEntity.getId())
+                        .locationCategoryName(categoryListEntity.getLocationCategory().getLocationCategoryName())
+                        .themeCategoryName(categoryListEntity.getThemeCategory().getThemeCategoryName())
+                        .build());
+            });
+
+            courseList.add(ReadCourseResponse.builder()
+                    .id(courseEntity.getId())
+                    .authorId(courseEntity.getAuthorId())
+                    .courseTitle(courseEntity.getCourseTitle())
+                    .courseStatus(courseEntity.getCourseStatus())
+                    .createAt(courseEntity.getCreateAt())
+                    .whetherLastPage(courseEntityList.isLast())
+                    .readPlaceDetailResponseList(readPlaceDetailResponseList)
+                    .hashtagList(hashtagList)
+                    .readPlaceImgResponseList(readPlaceImgResponseList)
+                    .categoryLists(categoryLists)
+                    .build());
+        });
+
+        return courseList;
     }
 
 }
