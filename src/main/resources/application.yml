@@ -16,12 +16,6 @@ spring:
       matching-strategy: ant_path_matcher
   profiles:
     include: aws, local-db
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://13.125.238.75:8761/eureka
 logging:
   level:
     com:
