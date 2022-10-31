@@ -5,6 +5,7 @@ import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
 import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -19,6 +20,8 @@ public class Course {
     private String courseTitle;
     private String courseComment;
     private CourseStatus courseStatus;
+    private LocalDate createAt;
+
 
     private List<PlaceDetail> placeDetailList;
     private List<Hashtag> hashtagList;
@@ -36,6 +39,7 @@ public class Course {
         this.hashtagList = getHashtagList();
         this.placeImgList = getPlaceImgList();
         this.categoryLists = getCategoryLists();
+        this.createAt = getCreateAt();
 
     }
 }

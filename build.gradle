@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.cosmost.project'
-version = '0.0.1-SNAPSHOT'
+version = '1.0'
 sourceCompatibility = '11'
 
 configurations {
@@ -32,7 +32,10 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()

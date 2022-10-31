@@ -1,4 +1,8 @@
+server:
+  port: 9002
 spring:
+  application:
+    name: cosmost-service
   jpa:
     properties:
       hibernate:
@@ -12,11 +16,13 @@ spring:
       matching-strategy: ant_path_matcher
   profiles:
     include: aws, local-db
-
 logging:
   level:
     com:
       amazonaws:
         util:
           EC2MetadataUtils: error
+jwt:
+  tokenValidTime: 1800000
+  secret: COS-MOST-TEAM-SECRET-KEY
 

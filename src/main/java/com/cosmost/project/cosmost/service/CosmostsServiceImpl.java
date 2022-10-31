@@ -11,6 +11,7 @@ import com.cosmost.project.cosmost.responsebody.ReadCourseResponse;
 import com.cosmost.project.cosmost.responsebody.ReadPlaceDetailResponse;
 import com.cosmost.project.cosmost.responsebody.ReadPlaceImgResponse;
 import com.cosmost.project.cosmost.util.AmazonS3ResourceStorage;
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,7 +33,7 @@ public class CosmostsServiceImpl implements CosmostsService {
     private final CourseEntityRepository courseEntityRepository;
     private final PlaceDetailEntityRepository placeDetailEntityRepository;
     private final HashtagEntityRepository hashtagEntityRepository;
-    private final PlaceImgRepository placeImgRepository;
+    private final PlaceImgEntityRepository placeImgEntityRepository;
     private final AmazonS3ResourceStorage amazonS3ResourceStorage;
     private final CategoryListRepository categoryListRepository;
     private final LocationCategoryRepository locationCategoryRepository;
@@ -45,18 +45,19 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     @Autowired
     public CosmostsServiceImpl(CourseEntityRepository courseEntityRepository, PlaceDetailEntityRepository placeDetailEntityRepository,
-                               HashtagEntityRepository hashtagEntityRepository, PlaceImgRepository placeImgRepository,
+                               HashtagEntityRepository hashtagEntityRepository, PlaceImgEntityRepository placeImgEntityRepository,
                                AmazonS3ResourceStorage amazonS3ResourceStorage, AmazonS3 amazonS3,
                                CategoryListRepository categoryListRepository, LocationCategoryRepository locationCategoryRepository,
                                ThemeCategoryRepository themeCategoryRepository) {
         this.courseEntityRepository = courseEntityRepository;
         this.placeDetailEntityRepository = placeDetailEntityRepository;
         this.hashtagEntityRepository = hashtagEntityRepository;
-        this.placeImgRepository = placeImgRepository;
+        this.placeImgEntityRepository = placeImgEntityRepository;
         this.amazonS3ResourceStorage = amazonS3ResourceStorage;
         this.amazonS3 = amazonS3;
         this.categoryListRepository = categoryListRepository;
@@ -69,7 +70,15 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Transactional
     @Override
     public void createCourse(CreateCourseRequest createCourseRequest, List<MultipartFile> file) {
-        CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest);
+        // header 내에 Authorization으로 있는 기본키를 반환
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        String token = request.getHeader("Authorization");
+        Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+        int count = 0;
+
+        CourseEntity courseEntity = createCourseRequest.createDtoToEntity(createCourseRequest, authorId);
         courseEntityRepository.save(courseEntity);
 
         for(CreatePlaceDetailRequest placeDetailRequest : createCourseRequest.getCreatePlaceDetailRequestList()) {
@@ -81,14 +90,14 @@ public class CosmostsServiceImpl implements CosmostsService {
         }
 
         List<FileInfoRequest> returnDto = new ArrayList<>();
-        CreatePlaceImgRequest placeImgRequest = new CreatePlaceImgRequest();
 
-        for(MultipartFile temp : file) {
-            FileInfoRequest fileInfoRequest = FileInfoRequest.multipartOf(temp, "place_img"); // 폴더이름
-            amazonS3ResourceStorage.store(fileInfoRequest, temp);
+        for(CreatePlaceImgRequest placeImgRequest : createCourseRequest.getCreatePlaceImgRequestList()) {
+            FileInfoRequest fileInfoRequest = FileInfoRequest.multipartOf(file.get(count), "place_img"); // 폴더이름
+            amazonS3ResourceStorage.store(fileInfoRequest, file.get(count));
             returnDto.add(fileInfoRequest);
 
-            placeImgRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest));
+            placeImgEntityRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest, placeImgRequest));
+            count += 1;
         }
 
 
@@ -106,18 +115,23 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Transactional
     @Override
     public void updateCourse(Long id, UpdateCourseRequest updateCourseRequest, List<MultipartFile> file) {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        String token = request.getHeader("Authorization");
+        Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+        int count = 0;
 
         Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
                 courseEntityRepository.findById(id).orElseThrow(
                         CourseIdNotfound::new));
 
         if (courseEntityCheck.isPresent()) {
-            CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(id, updateCourseRequest);
+            CourseEntity courseEntity = updateCourseRequest.updateDtoToEntity(id, updateCourseRequest, authorId);
             courseEntityRepository.save(courseEntity);
 
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findAllByCourse(courseEntityCheck.get());
-            List<PlaceImgEntity> placeImgEntityList = placeImgRepository.findAllByCourse(courseEntityCheck.get());
 
             for (PlaceDetailEntity temp : placeDetailEntityList) {
                 placeDetailEntityRepository.deleteById(temp.getId());
@@ -127,12 +141,20 @@ public class CosmostsServiceImpl implements CosmostsService {
                 hashtagEntityRepository.deleteById(temp.getId());
             }
 
-            for (PlaceImgEntity temp : placeImgEntityList) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, temp.getPlaceImgSaveName()));
-                // key: 삭제를 원하는 객체, 이때 모든 경로를 넣어줘야 한다. (ex. /v1/v2/object.jpg)
 
-                placeImgRepository.deleteById(temp.getId());
+            if(!updateCourseRequest.getDeletePlaceImgRequestList().isEmpty()) {
+
+                for (int i=0; i<updateCourseRequest.getDeletePlaceImgRequestList().size(); i++) {
+                    placeImgEntityRepository.deleteById(updateCourseRequest.getDeletePlaceImgRequestList().get(i));
+                }
             }
+
+            if(!updateCourseRequest.getUpdatePlaceImgRequestList().isEmpty()) {
+                for (UpdatePlaceImgRequest placeImgRequest : updateCourseRequest.getUpdatePlaceImgRequestList()) {
+                    placeImgEntityRepository.save(placeImgRequest.updateDtoToEntity(placeImgRequest, courseEntity));
+                }
+            }
+
 
             for (CreatePlaceDetailRequest placeDetailRequest : updateCourseRequest.getCreatePlaceDetailRequestList()) {
                 placeDetailEntityRepository.save(placeDetailRequest.createDtoToEntity(placeDetailRequest, courseEntity));
@@ -142,15 +164,18 @@ public class CosmostsServiceImpl implements CosmostsService {
                 hashtagEntityRepository.save(hashtagRequest.createDtoToEntity(hashtagRequest, courseEntity));
             }
 
-            List<FileInfoRequest> returnDto = new ArrayList<>();
-            CreatePlaceImgRequest placeImgRequest = new CreatePlaceImgRequest();
+            if (!file.get(0).isEmpty()) {
+                List<FileInfoRequest> returnDto = new ArrayList<>();
 
-            for(MultipartFile temp : file) {
-                FileInfoRequest fileInfoRequest = FileInfoRequest.multipartOf(temp, "place_img"); // 폴더이름
-                amazonS3ResourceStorage.store(fileInfoRequest, temp);
-                returnDto.add(fileInfoRequest);
+                for(CreatePlaceImgRequest placeImgRequest : updateCourseRequest.getCreatePlaceImgRequestList()) {
+                    FileInfoRequest fileInfoRequest = FileInfoRequest.multipartOf(file.get(count), "place_img"); // 폴더이름
+                    amazonS3ResourceStorage.store(fileInfoRequest, file.get(count));
+                    returnDto.add(fileInfoRequest);
 
-                placeImgRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest));
+                    placeImgEntityRepository.save(placeImgRequest.createDtoToEntity(courseEntity, fileInfoRequest, placeImgRequest));
+                    count += 1;
+                }
+
             }
 
             for(UpdateCategoryListRequest categoryListRequest : updateCourseRequest.getUpdateCategoryListRequestList()) {
@@ -175,7 +200,7 @@ public class CosmostsServiceImpl implements CosmostsService {
         if(courseEntityCheck.isPresent()) {
             List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findAllByCourse(courseEntityCheck.get());
-            List<PlaceImgEntity> placeImgEntityList = placeImgRepository.findAllByCourse(courseEntityCheck.get());
+            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<CategoryListEntity> categoryListEntity = categoryListRepository.findByCourse_Id(courseEntityCheck.get().getId());
 
             for (PlaceDetailEntity temp : placeDetailEntityList) {
@@ -187,10 +212,7 @@ public class CosmostsServiceImpl implements CosmostsService {
             }
 
             for (PlaceImgEntity temp : placeImgEntityList) {
-                amazonS3.deleteObject(new DeleteObjectRequest(bucket, temp.getPlaceImgSaveName()));
-                // key: 삭제를 원하는 객체, 이때 모든 경로를 넣어줘야 한다. (ex. /v1/v2/object.jpg)
-
-                placeImgRepository.deleteById(temp.getId());
+                placeImgEntityRepository.deleteById(temp.getId());
             }
 
             for (CategoryListEntity temp : categoryListEntity) {
@@ -204,10 +226,12 @@ public class CosmostsServiceImpl implements CosmostsService {
     // 작성한 코스 목록 조회
     @Override
     public List<ReadCourseResponse> readCourseByAuthId() {
-        // header 내에 Authorization으로 있는 기본키를 반환
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long authorId = Long.parseLong(request.getHeader("Authorization"));
+
+        String token = request.getHeader("Authorization");
+        Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
 
         List<CourseEntity> courseEntityList = courseEntityRepository.findAllByAuthorId(authorId);
         List<ReadCourseResponse> courseList = new ArrayList<>();
@@ -222,7 +246,7 @@ public class CosmostsServiceImpl implements CosmostsService {
             List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(courseEntity.getId());
             List<Hashtag> hashtagList = new ArrayList<>();
 
-            List<PlaceImgEntity> placeImgEntityList = placeImgRepository.findByCourse_Id(courseEntity.getId());
+            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(courseEntity.getId(), 0);
             List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
 
             List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntity.getId());
@@ -247,6 +271,7 @@ public class CosmostsServiceImpl implements CosmostsService {
             placeImgEntityList.forEach(placeImgEntity -> {
                 readPlaceImgResponseList.add(ReadPlaceImgResponse.builder()
                         .id(placeImgEntity.getId())
+                        .placeImgOrder(placeImgEntity.getPlaceImgOrder())
                         .placeImgUrl(placeImgEntity.getPlaceImgUrl())
                         .build());
             });
@@ -264,6 +289,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .authorId(courseEntity.getAuthorId())
                     .courseTitle(courseEntity.getCourseTitle())
                     .courseStatus(courseEntity.getCourseStatus())
+                    .createAt(courseEntity.getCreateAt())
                     .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .hashtagList(hashtagList)
                     .readPlaceImgResponseList(readPlaceImgResponseList)
@@ -291,7 +317,7 @@ public class CosmostsServiceImpl implements CosmostsService {
             List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<Hashtag> hashtagList = new ArrayList<>();
 
-            List<PlaceImgEntity> placeImgEntityList = placeImgRepository.findAllByCourse(courseEntityCheck.get());
+            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findAllByCourse(courseEntityCheck.get());
             List<PlaceImg> placeImgList = new ArrayList<>();
 
             List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntityCheck.get().getId());
@@ -303,7 +329,8 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .placeName(placeDetailEntity.getPlaceName())
                         .placeComment(placeDetailEntity.getPlaceComment())
                         .placeOrder(placeDetailEntity.getPlaceOrder())
-                        .placeUrl(placeDetailEntity.getPlaceUrl())
+                        .placeXCoordinate(placeDetailEntity.getPlaceXCoordinate())
+                        .placeYCoordinate(placeDetailEntity.getPlaceYCoordinate())
                         .build());
             });
 
@@ -320,6 +347,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                         .placeImgOriginName(placeImgEntity.getPlaceImgOriginName())
                         .placeImgSaveName(placeImgEntity.getPlaceImgSaveName())
                         .placeImgUrl(placeImgEntity.getPlaceImgUrl())
+                        .placeImgOrder(placeImgEntity.getPlaceImgOrder())
                         .build());
             });
 
@@ -337,6 +365,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .courseTitle(courseEntityCheck.get().getCourseTitle())
                     .courseComment(courseEntityCheck.get().getCourseComment())
                     .courseStatus(courseEntityCheck.get().getCourseStatus())
+                    .createAt(courseEntityCheck.get().getCreateAt())
                     .placeDetailList(placeDetailList)
                     .hashtagList(hashtagList)
                     .placeImgList(placeImgList)
