@@ -23,13 +23,11 @@ public class ReadCourseResponse {
     private String courseTitle;
     private CourseStatus courseStatus;
     private LocalDate createAt;
-
+    private boolean whetherLastPage;
 
     private List<ReadPlaceDetailResponse> readPlaceDetailResponseList;
     private List<Hashtag> hashtagList;
     private List<ReadPlaceImgResponse> readPlaceImgResponseList;
     private List<CategoryList> categoryLists;
-
-
 
 }
