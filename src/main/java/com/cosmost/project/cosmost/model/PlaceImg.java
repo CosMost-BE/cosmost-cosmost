@@ -21,12 +21,15 @@ public class PlaceImg {
     private String placeImgOriginName;
     private String placeImgSaveName;
     private String placeImgUrl;
+    private int placeImgOrder;
+
 
     public PlaceImg(PlaceImgEntity placeImgEntity) {
         this.id = placeImgEntity.getId();
         this.placeImgOriginName = placeImgEntity.getPlaceImgOriginName();
         this.placeImgSaveName = placeImgEntity.getPlaceImgSaveName();
         this.placeImgUrl = placeImgEntity.getPlaceImgUrl();
+        this.placeImgOrder = placeImgEntity.getPlaceImgOrder();
 
     }
 

@@ -34,14 +34,13 @@ public class CreateCourseRequest {
     @Valid
     private List<CreateHashtagRequest> createHashtagRequestList;
 
-    @Valid
     private List<CreatePlaceImgRequest> createPlaceImgRequestList;
 
     private List<CreateCategoryListRequest> createCategoryListRequestList;
 
-    public CourseEntity createDtoToEntity(CreateCourseRequest createCourseRequest) {
+    public CourseEntity createDtoToEntity(CreateCourseRequest createCourseRequest, Long authorId) {
         return CourseEntity.builder()
-                .authorId(createCourseRequest.getAuthorId())
+                .authorId(authorId)
                 .courseTitle(createCourseRequest.getCourseTitle())
                 .courseComment(createCourseRequest.getCourseComment())
                 .courseStatus(CourseStatus.ACTIVE)

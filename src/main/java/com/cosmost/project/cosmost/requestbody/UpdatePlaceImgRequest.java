@@ -1,7 +1,6 @@
 package com.cosmost.project.cosmost.requestbody;
 
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
-import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
 import com.cosmost.project.cosmost.infrastructure.entity.PlaceImgEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,8 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreatePlaceImgRequest {
+public class UpdatePlaceImgRequest {
+    private Long id;
 
     @NotBlank(message = "장소 이미지 원본 이름은 필수 입력 값입니다.")
     private String placeImgOriginName;
@@ -29,12 +29,13 @@ public class CreatePlaceImgRequest {
 
     private Long course;
 
-    public PlaceImgEntity createDtoToEntity(CourseEntity courseEntity, FileInfoRequest fileInfoRequest, CreatePlaceImgRequest createPlaceImgRequest) {
+    public PlaceImgEntity updateDtoToEntity(UpdatePlaceImgRequest updatePlaceImgRequest, CourseEntity courseEntity) {
         return PlaceImgEntity.builder()
-                .placeImgOriginName(fileInfoRequest.getName())
-                .placeImgSaveName(fileInfoRequest.getRemotePath())
-                .placeImgUrl(fileInfoRequest.getUrl())
-                .placeImgOrder(createPlaceImgRequest.getPlaceImgOrder())
+                .id(updatePlaceImgRequest.getId())
+                .placeImgOriginName(updatePlaceImgRequest.getPlaceImgOriginName())
+                .placeImgSaveName(updatePlaceImgRequest.getPlaceImgSaveName())
+                .placeImgUrl(updatePlaceImgRequest.getPlaceImgUrl())
+                .placeImgOrder(updatePlaceImgRequest.getPlaceImgOrder())
                 .course(courseEntity)
                 .build();
     }

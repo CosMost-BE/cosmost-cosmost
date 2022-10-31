@@ -13,6 +13,7 @@ public class ReadPlaceImgResponse {
 
     private Long id;
 
+    private int placeImgOrder;
     private String placeImgUrl;
 
 }

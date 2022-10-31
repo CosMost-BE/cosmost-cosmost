@@ -36,11 +36,14 @@ public class UpdateCourseRequest {
 
     private List<UpdateCategoryListRequest> updateCategoryListRequestList;
 
+    private List<Long> deletePlaceImgRequestList;
+    private List<CreatePlaceImgRequest> createPlaceImgRequestList;
+    private List<UpdatePlaceImgRequest> updatePlaceImgRequestList;
 
-    public CourseEntity updateDtoToEntity(Long id, UpdateCourseRequest updateCourseRequest) {
+    public CourseEntity updateDtoToEntity(Long id, UpdateCourseRequest updateCourseRequest, Long authorId) {
         return CourseEntity.builder()
                 .id(id)
-                .authorId(updateCourseRequest.getAuthorId())
+                .authorId(authorId)
                 .courseTitle(updateCourseRequest.getCourseTitle())
                 .courseComment(updateCourseRequest.getCourseComment())
                 .courseStatus(updateCourseRequest.getCourseStatus())
