@@ -227,7 +227,7 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     // 작성한 코스 목록 조회
     @Override
-    public List<ReadCourseResponse> readCourseByAuthId() {
+    public List<ReadCourseResponse> readCourseByAuthId(Pageable pageable) {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
 
@@ -235,7 +235,7 @@ public class CosmostsServiceImpl implements CosmostsService {
         Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
 
-        List<CourseEntity> courseEntityList = courseEntityRepository.findAllByAuthorId(authorId);
+        Slice<CourseEntity> courseEntityList = courseEntityRepository.findAllByAuthorId(authorId, pageable);
         List<ReadCourseResponse> courseList = new ArrayList<>();
 
 
@@ -292,6 +292,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .courseTitle(courseEntity.getCourseTitle())
                     .courseStatus(courseEntity.getCourseStatus())
                     .createAt(courseEntity.getCreateAt())
+                    .whetherLastPage(courseEntityList.isLast())
                     .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .hashtagList(hashtagList)
                     .readPlaceImgResponseList(readPlaceImgResponseList)

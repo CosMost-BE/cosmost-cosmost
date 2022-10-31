@@ -74,7 +74,7 @@ public class CourseController {
                                         Pageable pageable) {
 
         if(String.valueOf(filter).equals("auth")) {
-            List<ReadCourseResponse> course = cosmostsService.readCourseByAuthId();
+            List<ReadCourseResponse> course = cosmostsService.readCourseByAuthId(pageable);
             return ResponseEntity.ok(course);
         } else if (String.valueOf(filter).equals("all") && String.valueOf(category).equals("location")) {
             List<LocationCategoryEntity> locationCategoryEntityList = categoryService.readAllLocationCategory();

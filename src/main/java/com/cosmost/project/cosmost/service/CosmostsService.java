@@ -16,7 +16,7 @@ public interface CosmostsService {
     void createCourse(CreateCourseRequest createCourseRequest, List<MultipartFile> file);
     void updateCourse(Long id, UpdateCourseRequest updateCourseRequest, List<MultipartFile> file);
     void deleteCourse(Long id);
-    List<ReadCourseResponse> readCourseByAuthId();
+    List<ReadCourseResponse> readCourseByAuthId(Pageable pageable);
     Course readCourseByCourseId(Long id);
     List<ReadCourseResponse> readCourseAll(Pageable pageable);
 
