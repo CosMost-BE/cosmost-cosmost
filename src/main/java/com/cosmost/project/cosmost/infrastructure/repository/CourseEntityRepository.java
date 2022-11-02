@@ -15,10 +15,5 @@ import java.util.Optional;
 public interface CourseEntityRepository extends JpaRepository<CourseEntity, Long> {
 
     Slice<CourseEntity> findAllByAuthorId(Long authorId, Pageable pageable);
-
-
-//    @Query(value = "select count(authorId) from CourseEntity where authorId = :authorId")
-//    int authorCourseCount(Long authorId);
-
     int countByAuthorId(Long authorId);
 }
