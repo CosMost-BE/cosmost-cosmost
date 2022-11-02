@@ -70,6 +70,7 @@ public class CourseController {
     @GetMapping("")
     public ResponseEntity<?> readCourse(@RequestParam(value="filter", required=false) String filter,
                                         @RequestParam(value="category", required=false) String category,
+                                        @RequestParam(value="name-id", required=false) Long nameId,
                                         @RequestParam(value="keyword", required=false) String keyword,
                                         @RequestParam(value="hashtag", required=false) String hashtag,
                                         Pageable pageable) {
@@ -86,6 +87,10 @@ public class CourseController {
         } else if (String.valueOf(filter).equals("all")) { // 코스 전체 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseAll(pageable);
             return ResponseEntity.ok(course);
+        } else if (String.valueOf(category).equals("location") && !String.valueOf(nameId).equals(null) ||
+                String.valueOf(category).equals("theme") && !String.valueOf(nameId).equals(null)) { // 카테고리로 코스 전체 목록 조회
+            List<ReadCourseResponse> course = cosmostsService.readCourseByCategoryAll(category, nameId, pageable);
+            return ResponseEntity.ok(course);
         } else if (!String.valueOf(keyword).equals(null)) { // 코스 검색 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseByKeyword(keyword, pageable);
             return ResponseEntity.ok(course);
@@ -93,7 +98,6 @@ public class CourseController {
             throw new QueryNotfound();
         }
     }
-
 
     // 코스 한 개 조회
     @GetMapping("/{id}")
