@@ -373,6 +373,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .courseComment(courseEntityCheck.get().getCourseComment())
                     .courseStatus(courseEntityCheck.get().getCourseStatus())
                     .createAt(courseEntityCheck.get().getCreateAt())
+                    .authorCourseCount(courseEntityRepository.countByAuthorId(courseEntityCheck.get().getAuthorId()))
                     .placeDetailList(placeDetailList)
                     .hashtagList(hashtagList)
                     .placeImgList(placeImgList)
