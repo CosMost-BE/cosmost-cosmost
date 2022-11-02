@@ -22,6 +22,7 @@ public interface CosmostsService {
     List<ReadCourseResponse> readCourseByKeyword(String keyword, Pageable pageable);
     ReadCourseResponse readCourseFrameByCourseId(Long id);
     List<ReadCourseResponse> readCourseByCategoryAll(String category, Long nameId, Pageable pageable);
+    List<ReadCourseResponse> readCourseByHashtag(String hashtag, Pageable pageable);
 
 
 

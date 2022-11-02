@@ -600,8 +600,9 @@ public class CosmostsServiceImpl implements CosmostsService {
         return null;
     }
 
+    // 카테고리로 코스 전체 목록 조회
     @Override
-    public List<ReadCourseResponse> readCourseByCategoryAll(String category, Long nameId, Pageable pageable) { // 카테고리로 코스 전체 목록 조회
+    public List<ReadCourseResponse> readCourseByCategoryAll(String category, Long nameId, Pageable pageable) {
 
         Slice<CategoryListEntity> categoryListEntitySlice = null;
 
@@ -668,6 +669,78 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .courseStatus(courseEntity.getCourse().getCourseStatus())
                     .createAt(courseEntity.getCourse().getCreateAt())
                     .whetherLastPage(finalCategoryListEntitySlice.isLast())
+                    .readPlaceDetailResponseList(readPlaceDetailResponseList)
+                    .hashtagList(hashtagList)
+                    .readPlaceImgResponseList(readPlaceImgResponseList)
+                    .categoryLists(categoryLists)
+                    .build());
+        });
+
+        return courseList;
+    }
+
+    // 해시태그별로 코스 조회
+    @Override
+    public List<ReadCourseResponse> readCourseByHashtag(String hashtag, Pageable pageable) {
+        Slice<HashtagEntity> hashtagEntitySlice = hashtagEntityRepository.findAllByKeyword(hashtag, pageable);
+
+        List<ReadCourseResponse> courseList = new ArrayList<>();
+
+        hashtagEntitySlice.forEach(courseEntity -> {
+
+
+            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(courseEntity.getCourse().getId());
+            List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
+
+            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(courseEntity.getCourse().getId());
+            List<Hashtag> hashtagList = new ArrayList<>();
+
+            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(courseEntity.getCourse().getId(), 0);
+            List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
+
+            List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntity.getCourse().getId());
+            List<CategoryList> categoryLists = new ArrayList<>();
+
+
+            placeDetailEntityList.forEach(placeDetailEntity -> {
+
+                readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
+                        .id(placeDetailEntity.getId())
+                        .placeName(placeDetailEntity.getPlaceName())
+                        .placeOrder(placeDetailEntity.getPlaceOrder())
+                        .build());
+            });
+
+            hashtagEntityList.forEach(hashtagEntity -> {
+                hashtagList.add(Hashtag.builder()
+                        .id(hashtagEntity.getId())
+                        .keyword(hashtagEntity.getKeyword())
+                        .build());
+            });
+
+            placeImgEntityList.forEach(placeImgEntity -> {
+                readPlaceImgResponseList.add(ReadPlaceImgResponse.builder()
+                        .id(placeImgEntity.getId())
+                        .placeImgOrder(placeImgEntity.getPlaceImgOrder())
+                        .placeImgUrl(placeImgEntity.getPlaceImgUrl())
+                        .build());
+            });
+
+            categoryListEntityList.forEach(categoryListEntity -> {
+                categoryLists.add(CategoryList.builder()
+                        .id(categoryListEntity.getId())
+                        .locationCategoryName(categoryListEntity.getLocationCategory().getLocationCategoryName())
+                        .themeCategoryName(categoryListEntity.getThemeCategory().getThemeCategoryName())
+                        .build());
+            });
+
+            courseList.add(ReadCourseResponse.builder()
+                    .id(courseEntity.getCourse().getId())
+                    .authorId(courseEntity.getCourse().getAuthorId())
+                    .courseTitle(courseEntity.getCourse().getCourseTitle())
+                    .courseStatus(courseEntity.getCourse().getCourseStatus())
+                    .createAt(courseEntity.getCourse().getCreateAt())
+                    .whetherLastPage(hashtagEntitySlice.isLast())
                     .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .hashtagList(hashtagList)
                     .readPlaceImgResponseList(readPlaceImgResponseList)
