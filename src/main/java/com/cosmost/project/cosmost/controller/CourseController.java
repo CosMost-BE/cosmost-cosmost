@@ -68,12 +68,14 @@ public class CourseController {
 
     // 코스 조회
     @GetMapping("")
-    public ResponseEntity<?> readCourse(@RequestParam(value="filter", required=false) String filter,
-                                        @RequestParam(value="category", required=false) String category,
-                                        @RequestParam(value="name-id", required=false) Long nameId,
-                                        @RequestParam(value="keyword", required=false) String keyword,
-                                        @RequestParam(value="hashtag", required=false) String hashtag,
+    public ResponseEntity<?> readCourse(@RequestParam(value="filter", defaultValue = " ", required=false) String filter,
+                                        @RequestParam(value="category", defaultValue = " ", required=false) String category,
+                                        @RequestParam(value="name-id", defaultValue = " ", required=false) Long nameId,
+                                        @RequestParam(value="keyword", defaultValue = " ", required=false) String keyword,
+                                        @RequestParam(value="hashtag", defaultValue = " ", required=false) String hashtag,
                                         Pageable pageable) {
+
+        System.out.println("#$%#$%#$%#$%#$"+hashtag);
 
         if(String.valueOf(filter).equals("auth")) { // 작성한 코스 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseByAuthId(pageable);
@@ -87,11 +89,14 @@ public class CourseController {
         } else if (String.valueOf(filter).equals("all")) { // 코스 전체 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseAll(pageable);
             return ResponseEntity.ok(course);
-        } else if (String.valueOf(category).equals("location") && !String.valueOf(nameId).equals(null) ||
-                String.valueOf(category).equals("theme") && !String.valueOf(nameId).equals(null)) { // 카테고리로 코스 전체 목록 조회
+        } else if (String.valueOf(category).equals("location") && !String.valueOf(nameId).equals(" ") ||
+                String.valueOf(category).equals("theme") && !String.valueOf(nameId).equals(" ")) { // 카테고리로 코스 전체 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseByCategoryAll(category, nameId, pageable);
             return ResponseEntity.ok(course);
-        } else if (!String.valueOf(keyword).equals(null)) { // 코스 검색 목록 조회
+        }else if (!String.valueOf(hashtag).equals(" ")) { // 해시태그별로 코스 조회
+            List<ReadCourseResponse> course = cosmostsService.readCourseByHashtag(hashtag, pageable);
+            return ResponseEntity.ok(course);
+        } else if (!String.valueOf(keyword).equals(" ")) { // 코스 검색 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseByKeyword(keyword, pageable);
             return ResponseEntity.ok(course);
         } else {

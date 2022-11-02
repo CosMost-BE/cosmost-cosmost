@@ -23,4 +23,6 @@ public interface HashtagEntityRepository extends JpaRepository<HashtagEntity, Lo
             "group by h.course")
     Slice<HashtagEntity> searchCourse(@Param("keyword") String keyword, Pageable pageable);
 
+    Slice<HashtagEntity> findAllByKeyword(String hashtag, Pageable pageable);
+
 }
