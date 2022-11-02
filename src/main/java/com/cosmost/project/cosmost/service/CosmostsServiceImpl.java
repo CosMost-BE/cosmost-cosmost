@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -227,7 +228,7 @@ public class CosmostsServiceImpl implements CosmostsService {
 
     // 작성한 코스 목록 조회
     @Override
-    public List<ReadCourseResponse> readCourseByAuthId() {
+    public List<ReadCourseResponse> readCourseByAuthId(Pageable pageable) {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
 
@@ -235,7 +236,7 @@ public class CosmostsServiceImpl implements CosmostsService {
         Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
 
-        List<CourseEntity> courseEntityList = courseEntityRepository.findAllByAuthorId(authorId);
+        Slice<CourseEntity> courseEntityList = courseEntityRepository.findAllByAuthorId(authorId, pageable);
         List<ReadCourseResponse> courseList = new ArrayList<>();
 
 
@@ -292,6 +293,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .courseTitle(courseEntity.getCourseTitle())
                     .courseStatus(courseEntity.getCourseStatus())
                     .createAt(courseEntity.getCreateAt())
+                    .whetherLastPage(courseEntityList.isLast())
                     .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .hashtagList(hashtagList)
                     .readPlaceImgResponseList(readPlaceImgResponseList)
@@ -443,6 +445,78 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .courseStatus(courseEntity.getCourseStatus())
                     .createAt(courseEntity.getCreateAt())
                     .whetherLastPage(courseEntityList.isLast())
+                    .readPlaceDetailResponseList(readPlaceDetailResponseList)
+                    .hashtagList(hashtagList)
+                    .readPlaceImgResponseList(readPlaceImgResponseList)
+                    .categoryLists(categoryLists)
+                    .build());
+        });
+
+        return courseList;
+    }
+
+    // 코스 검색 목록 조회
+    @Override
+    public List<ReadCourseResponse> readCourseByKeyword(String keyword, Pageable pageable) {
+        Slice<HashtagEntity> findHashtagEntityList = hashtagEntityRepository.searchCourse(keyword, pageable);
+
+        List<ReadCourseResponse> courseList = new ArrayList<>();
+
+        findHashtagEntityList.forEach(courseEntity -> {
+
+
+            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(courseEntity.getCourse().getId());
+            List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
+
+            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(courseEntity.getCourse().getId());
+            List<Hashtag> hashtagList = new ArrayList<>();
+
+            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(courseEntity.getCourse().getId(), 0);
+            List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
+
+            List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntity.getCourse().getId());
+            List<CategoryList> categoryLists = new ArrayList<>();
+
+
+            placeDetailEntityList.forEach(placeDetailEntity -> {
+
+                readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
+                        .id(placeDetailEntity.getId())
+                        .placeName(placeDetailEntity.getPlaceName())
+                        .placeOrder(placeDetailEntity.getPlaceOrder())
+                        .build());
+            });
+
+            hashtagEntityList.forEach(hashtagEntity -> {
+                hashtagList.add(Hashtag.builder()
+                        .id(hashtagEntity.getId())
+                        .keyword(hashtagEntity.getKeyword())
+                        .build());
+            });
+
+            placeImgEntityList.forEach(placeImgEntity -> {
+                readPlaceImgResponseList.add(ReadPlaceImgResponse.builder()
+                        .id(placeImgEntity.getId())
+                        .placeImgOrder(placeImgEntity.getPlaceImgOrder())
+                        .placeImgUrl(placeImgEntity.getPlaceImgUrl())
+                        .build());
+            });
+
+            categoryListEntityList.forEach(categoryListEntity -> {
+                categoryLists.add(CategoryList.builder()
+                        .id(categoryListEntity.getId())
+                        .locationCategoryName(categoryListEntity.getLocationCategory().getLocationCategoryName())
+                        .themeCategoryName(categoryListEntity.getThemeCategory().getThemeCategoryName())
+                        .build());
+            });
+
+            courseList.add(ReadCourseResponse.builder()
+                    .id(courseEntity.getCourse().getId())
+                    .authorId(courseEntity.getCourse().getAuthorId())
+                    .courseTitle(courseEntity.getCourse().getCourseTitle())
+                    .courseStatus(courseEntity.getCourse().getCourseStatus())
+                    .createAt(courseEntity.getCourse().getCreateAt())
+                    .whetherLastPage(findHashtagEntityList.isLast())
                     .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .hashtagList(hashtagList)
                     .readPlaceImgResponseList(readPlaceImgResponseList)

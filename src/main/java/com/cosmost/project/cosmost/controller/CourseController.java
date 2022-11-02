@@ -69,12 +69,13 @@ public class CourseController {
     // 코스 조회
     @GetMapping("")
     public ResponseEntity<?> readCourse(@RequestParam(value="filter", required=false) String filter,
-                                        @RequestParam(value="limit", required=false) String limit,
                                         @RequestParam(value="category", required=false) String category,
+                                        @RequestParam(value="keyword", required=false) String keyword,
+                                        @RequestParam(value="hashtag", required=false) String hashtag,
                                         Pageable pageable) {
 
         if(String.valueOf(filter).equals("auth")) {
-            List<ReadCourseResponse> course = cosmostsService.readCourseByAuthId();
+            List<ReadCourseResponse> course = cosmostsService.readCourseByAuthId(pageable);
             return ResponseEntity.ok(course);
         } else if (String.valueOf(filter).equals("all") && String.valueOf(category).equals("location")) {
             List<LocationCategoryEntity> locationCategoryEntityList = categoryService.readAllLocationCategory();
@@ -84,6 +85,9 @@ public class CourseController {
             return ResponseEntity.ok(themeCategoryEntityList);
         } else if (String.valueOf(filter).equals("all")) {
             List<ReadCourseResponse> course = cosmostsService.readCourseAll(pageable);
+            return ResponseEntity.ok(course);
+        } else if (!String.valueOf(keyword).equals(null)) {
+            List<ReadCourseResponse> course = cosmostsService.readCourseByKeyword(keyword, pageable);
             return ResponseEntity.ok(course);
         } else {
             throw new QueryNotfound();
