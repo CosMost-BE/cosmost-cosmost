@@ -20,7 +20,7 @@ public interface CosmostsService {
     Course readCourseByCourseId(Long id);
     List<ReadCourseResponse> readCourseAll(Pageable pageable);
     List<ReadCourseResponse> readCourseByKeyword(String keyword, Pageable pageable);
-
+    ReadCourseResponse readCourseFrameByCourseId(Long id);
 
 
 

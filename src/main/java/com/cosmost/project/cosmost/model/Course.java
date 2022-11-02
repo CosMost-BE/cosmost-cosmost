@@ -22,11 +22,13 @@ public class Course {
     private CourseStatus courseStatus;
     private LocalDate createAt;
 
+    private int authorCourseCount;
 
     private List<PlaceDetail> placeDetailList;
     private List<Hashtag> hashtagList;
     private List<PlaceImg> placeImgList;
     private List<CategoryList> categoryLists;
+
 
 
     public Course(CourseEntity courseEntity) {

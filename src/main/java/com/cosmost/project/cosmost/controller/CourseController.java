@@ -74,19 +74,19 @@ public class CourseController {
                                         @RequestParam(value="hashtag", required=false) String hashtag,
                                         Pageable pageable) {
 
-        if(String.valueOf(filter).equals("auth")) {
+        if(String.valueOf(filter).equals("auth")) { // 작성한 코스 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseByAuthId(pageable);
             return ResponseEntity.ok(course);
-        } else if (String.valueOf(filter).equals("all") && String.valueOf(category).equals("location")) {
+        } else if (String.valueOf(filter).equals("all") && String.valueOf(category).equals("location")) { // 지역별 카테고리 전체 조회
             List<LocationCategoryEntity> locationCategoryEntityList = categoryService.readAllLocationCategory();
             return ResponseEntity.ok(locationCategoryEntityList);
-        } else if (String.valueOf(filter).equals("all") && String.valueOf(category).equals("theme")) {
+        } else if (String.valueOf(filter).equals("all") && String.valueOf(category).equals("theme")) { // 테마별 카테고리 전체 조회
             List<ThemeCategoryEntity> themeCategoryEntityList = categoryService.readAllThemeCategory();
             return ResponseEntity.ok(themeCategoryEntityList);
-        } else if (String.valueOf(filter).equals("all")) {
+        } else if (String.valueOf(filter).equals("all")) { // 코스 전체 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseAll(pageable);
             return ResponseEntity.ok(course);
-        } else if (!String.valueOf(keyword).equals(null)) {
+        } else if (!String.valueOf(keyword).equals(null)) { // 코스 검색 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseByKeyword(keyword, pageable);
             return ResponseEntity.ok(course);
         } else {
@@ -95,12 +95,18 @@ public class CourseController {
     }
 
 
-    // 코스 한 개 상세 조회
+    // 코스 한 개 조회
     @GetMapping("/{id}")
-    public ResponseEntity<Course> readCourseByCourseId(@PathVariable Long id) {
-        Course course = cosmostsService.readCourseByCourseId(id);
+    public ResponseEntity<?> readCourseByCourseId(@PathVariable Long id,
+                                                  @RequestParam(value="filter", required=false) String filter) {
+        if(String.valueOf(filter).equals("frame")) { // 코스 한 개 목록 조회
+            ReadCourseResponse readCourseResponse = cosmostsService.readCourseFrameByCourseId(id);
+            return ResponseEntity.ok(readCourseResponse);
+        } else {
+            Course course = cosmostsService.readCourseByCourseId(id); // 코스 한 개 상세 조회
+            return ResponseEntity.ok(course);
+        }
 
-        return ResponseEntity.ok(course);
     }
 
 
