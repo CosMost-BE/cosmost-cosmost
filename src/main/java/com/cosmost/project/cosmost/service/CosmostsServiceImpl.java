@@ -195,9 +195,15 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Transactional
     @Override
     public void deleteCourse(Long id) {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        String token = request.getHeader("Authorization");
+        Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
 
         Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
-                courseEntityRepository.findById(id).orElseThrow(
+                courseEntityRepository.findAllByIdAndAuthorId(id, authorId).orElseThrow(
                         CourseIdNotfound::new));
 
         if(courseEntityCheck.isPresent()) {
