@@ -465,23 +465,23 @@ public class CosmostsServiceImpl implements CosmostsService {
     // 코스 검색 목록 조회
     @Override
     public List<ReadCourseResponse> readCourseByKeyword(String keyword, Pageable pageable) {
-        Slice<HashtagEntity> hashtagEntitySlice = hashtagEntityRepository.searchCourse(keyword, pageable);
+        Slice<Long> searchCourseIdSlice = hashtagEntityRepository.searchCourseId(keyword, pageable);
 
         List<ReadCourseResponse> courseList = new ArrayList<>();
 
-        hashtagEntitySlice.forEach(courseEntity -> {
+        for(int i=0; i<searchCourseIdSlice.getContent().size(); i++) {
 
 
-            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(courseEntity.getCourse().getId());
+            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
             List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
 
-            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(courseEntity.getCourse().getId());
+            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
             List<Hashtag> hashtagList = new ArrayList<>();
 
-            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(courseEntity.getCourse().getId(), 0);
+            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(searchCourseIdSlice.getContent().get(i).longValue(), 0);
             List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
 
-            List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntity.getCourse().getId());
+            List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
             List<CategoryList> categoryLists = new ArrayList<>();
 
 
@@ -518,18 +518,18 @@ public class CosmostsServiceImpl implements CosmostsService {
             });
 
             courseList.add(ReadCourseResponse.builder()
-                    .id(courseEntity.getCourse().getId())
-                    .authorId(courseEntity.getCourse().getAuthorId())
-                    .courseTitle(courseEntity.getCourse().getCourseTitle())
-                    .courseStatus(courseEntity.getCourse().getCourseStatus())
-                    .createAt(courseEntity.getCourse().getCreateAt())
-                    .whetherLastPage(hashtagEntitySlice.isLast())
+                    .id(searchCourseIdSlice.getContent().get(i).longValue())
+                    .authorId(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getAuthorId())
+                    .courseTitle(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getCourseTitle())
+                    .courseStatus(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getCourseStatus())
+                    .createAt(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getCreateAt())
+                    .whetherLastPage(searchCourseIdSlice.isLast())
                     .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .hashtagList(hashtagList)
                     .readPlaceImgResponseList(readPlaceImgResponseList)
                     .categoryLists(categoryLists)
                     .build());
-        });
+        }
 
         return courseList;
     }
