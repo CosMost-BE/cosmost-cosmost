@@ -18,10 +18,9 @@ public interface HashtagEntityRepository extends JpaRepository<HashtagEntity, Lo
     List<HashtagEntity> findAllByCourse(CourseEntity courseEntity);
     List<HashtagEntity> findByCourse_Id(Long id);
 
-    @Query(value = "select h.course.id from HashtagEntity h inner join h.course " +
+    @Query(value = "select distinct h.course.id from HashtagEntity h inner join h.course " +
             "where h.course.courseTitle like %:keyword% or " +
-            "h.course.courseComment like %:keyword% or h.keyword like %:keyword% " +
-            "group by h.course.id")
+            "h.course.courseComment like %:keyword% or h.keyword like %:keyword%")
     Slice<Long> searchCourseId(@Param("keyword") String keyword, Pageable pageable);
 
     Slice<HashtagEntity> findAllByKeyword(String hashtag, Pageable pageable);
