@@ -19,7 +19,7 @@ public interface CosmostsService {
     List<ReadCourseResponse> readCourseByAuthId(Pageable pageable);
     Course readCourseByCourseId(Long id);
     List<ReadCourseResponse> readCourseAll(Pageable pageable);
-    List<ReadCourseResponse> readCourseByKeyword(String keyword, Pageable pageable);
+    List<ReadCourseResponse> readCourseByKeyword(String keyword, String category, Long nameId, Pageable pageable);
     ReadCourseResponse readCourseFrameByCourseId(Long id);
     List<ReadCourseResponse> readCourseByCategoryAll(String category, Long nameId, Pageable pageable);
     List<ReadCourseResponse> readCourseByHashtag(String hashtag, Pageable pageable);
