@@ -195,9 +195,15 @@ public class CosmostsServiceImpl implements CosmostsService {
     @Transactional
     @Override
     public void deleteCourse(Long id) {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        String token = request.getHeader("Authorization");
+        Long authorId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
 
         Optional<CourseEntity> courseEntityCheck = Optional.ofNullable(
-                courseEntityRepository.findById(id).orElseThrow(
+                courseEntityRepository.findAllByIdAndAuthorId(id, authorId).orElseThrow(
                         CourseIdNotfound::new));
 
         if(courseEntityCheck.isPresent()) {
@@ -456,77 +462,91 @@ public class CosmostsServiceImpl implements CosmostsService {
         return courseList;
     }
 
-    // 코스 검색 목록 조회
+    // 코스 검색 목록 조회, 카테고리로 코스 검색 목록 조회
     @Override
-    public List<ReadCourseResponse> readCourseByKeyword(String keyword, Pageable pageable) {
-        Slice<HashtagEntity> hashtagEntitySlice = hashtagEntityRepository.searchCourse(keyword, pageable);
-
+    public List<ReadCourseResponse> readCourseByKeyword(String keyword, String category, Long nameId, Pageable pageable) {
+        Slice<Long> searchCourseIdSlice = hashtagEntityRepository.searchCourseId(keyword, pageable);
         List<ReadCourseResponse> courseList = new ArrayList<>();
 
-        hashtagEntitySlice.forEach(courseEntity -> {
+        for(int i=0; i<searchCourseIdSlice.getContent().size(); i++) {
+
+            if (category.equals("location")) {
+                List<CategoryListEntity> categoryListEntitySlice = categoryListRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
+
+                if(!categoryListEntitySlice.get(0).getLocationCategory().getId().equals(nameId)) {
+                    continue;
+                }
+            } else if (category.equals("theme")) {
+                List<CategoryListEntity> categoryListEntitySlice = categoryListRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
+
+                if(!categoryListEntitySlice.get(0).getThemeCategory().getId().equals(nameId)) {
+                    continue;
+                }
+            }
+
+                List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
+                List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
+
+                List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
+                List<Hashtag> hashtagList = new ArrayList<>();
+
+                List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(searchCourseIdSlice.getContent().get(i).longValue(), 0);
+                List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
+
+                List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
+                List<CategoryList> categoryLists = new ArrayList<>();
 
 
-            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(courseEntity.getCourse().getId());
-            List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
+                placeDetailEntityList.forEach(placeDetailEntity -> {
 
-            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(courseEntity.getCourse().getId());
-            List<Hashtag> hashtagList = new ArrayList<>();
+                    readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
+                            .id(placeDetailEntity.getId())
+                            .placeName(placeDetailEntity.getPlaceName())
+                            .placeOrder(placeDetailEntity.getPlaceOrder())
+                            .build());
+                });
 
-            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(courseEntity.getCourse().getId(), 0);
-            List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
+                hashtagEntityList.forEach(hashtagEntity -> {
+                    hashtagList.add(Hashtag.builder()
+                            .id(hashtagEntity.getId())
+                            .keyword(hashtagEntity.getKeyword())
+                            .build());
+                });
 
-            List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(courseEntity.getCourse().getId());
-            List<CategoryList> categoryLists = new ArrayList<>();
+                placeImgEntityList.forEach(placeImgEntity -> {
+                    readPlaceImgResponseList.add(ReadPlaceImgResponse.builder()
+                            .id(placeImgEntity.getId())
+                            .placeImgOrder(placeImgEntity.getPlaceImgOrder())
+                            .placeImgUrl(placeImgEntity.getPlaceImgUrl())
+                            .build());
+                });
 
-
-            placeDetailEntityList.forEach(placeDetailEntity -> {
-
-                readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
-                        .id(placeDetailEntity.getId())
-                        .placeName(placeDetailEntity.getPlaceName())
-                        .placeOrder(placeDetailEntity.getPlaceOrder())
-                        .build());
-            });
-
-            hashtagEntityList.forEach(hashtagEntity -> {
-                hashtagList.add(Hashtag.builder()
-                        .id(hashtagEntity.getId())
-                        .keyword(hashtagEntity.getKeyword())
-                        .build());
-            });
-
-            placeImgEntityList.forEach(placeImgEntity -> {
-                readPlaceImgResponseList.add(ReadPlaceImgResponse.builder()
-                        .id(placeImgEntity.getId())
-                        .placeImgOrder(placeImgEntity.getPlaceImgOrder())
-                        .placeImgUrl(placeImgEntity.getPlaceImgUrl())
-                        .build());
-            });
-
-            categoryListEntityList.forEach(categoryListEntity -> {
-                categoryLists.add(CategoryList.builder()
-                        .id(categoryListEntity.getId())
-                        .locationCategoryName(categoryListEntity.getLocationCategory().getLocationCategoryName())
-                        .themeCategoryName(categoryListEntity.getThemeCategory().getThemeCategoryName())
-                        .build());
-            });
+                categoryListEntityList.forEach(categoryListEntity -> {
+                    categoryLists.add(CategoryList.builder()
+                            .id(categoryListEntity.getId())
+                            .locationCategoryName(categoryListEntity.getLocationCategory().getLocationCategoryName())
+                            .themeCategoryName(categoryListEntity.getThemeCategory().getThemeCategoryName())
+                            .build());
+                });
 
             courseList.add(ReadCourseResponse.builder()
-                    .id(courseEntity.getCourse().getId())
-                    .authorId(courseEntity.getCourse().getAuthorId())
-                    .courseTitle(courseEntity.getCourse().getCourseTitle())
-                    .courseStatus(courseEntity.getCourse().getCourseStatus())
-                    .createAt(courseEntity.getCourse().getCreateAt())
-                    .whetherLastPage(hashtagEntitySlice.isLast())
+                    .id(searchCourseIdSlice.getContent().get(i).longValue())
+                    .authorId(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getAuthorId())
+                    .courseTitle(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getCourseTitle())
+                    .courseStatus(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getCourseStatus())
+                    .createAt(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getCreateAt())
+                    .whetherLastPage(searchCourseIdSlice.isLast())
                     .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .hashtagList(hashtagList)
                     .readPlaceImgResponseList(readPlaceImgResponseList)
                     .categoryLists(categoryLists)
                     .build());
-        });
+
+            }
 
         return courseList;
     }
+
 
     // 코스 한 개 목록 조회
     @Override
