@@ -16,4 +16,6 @@ public interface CourseEntityRepository extends JpaRepository<CourseEntity, Long
 
     Slice<CourseEntity> findAllByAuthorId(Long authorId, Pageable pageable);
     int countByAuthorId(Long authorId);
+
+    Optional<CourseEntity> findAllByIdAndAuthorId(Long id, Long authorId);
 }

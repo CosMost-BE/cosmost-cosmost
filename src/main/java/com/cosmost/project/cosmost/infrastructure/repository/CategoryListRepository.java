@@ -7,6 +7,8 @@ import com.cosmost.project.cosmost.model.CategoryList;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,5 @@ public interface CategoryListRepository extends JpaRepository<CategoryListEntity
     List<CategoryListEntity> findByCourse_Id(Long id);
     Slice<CategoryListEntity> findAllByLocationCategory_Id(Long id, Pageable pageable);
     Slice<CategoryListEntity> findAllByThemeCategory_Id(Long id, Pageable pageable);
-
 
 }
