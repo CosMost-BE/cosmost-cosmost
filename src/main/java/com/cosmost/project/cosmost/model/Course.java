@@ -2,7 +2,6 @@ package com.cosmost.project.cosmost.model;
 
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
-import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
 import lombok.*;
 
 import java.time.LocalDate;

@@ -1,7 +1,6 @@
 package com.cosmost.project.cosmost.controller;
 
 import com.cosmost.project.cosmost.exception.QueryNotfound;
-import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.entity.LocationCategoryEntity;
 import com.cosmost.project.cosmost.infrastructure.entity.ThemeCategoryEntity;
 import com.cosmost.project.cosmost.model.Course;
@@ -12,9 +11,7 @@ import com.cosmost.project.cosmost.service.CategoryService;
 import com.cosmost.project.cosmost.service.CosmostsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
