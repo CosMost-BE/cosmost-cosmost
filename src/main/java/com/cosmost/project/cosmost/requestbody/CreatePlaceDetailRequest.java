@@ -1,7 +1,6 @@
 package com.cosmost.project.cosmost.requestbody;
 
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
-import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
 import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor

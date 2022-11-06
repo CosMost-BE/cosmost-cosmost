@@ -1,7 +1,6 @@
 package com.cosmost.project.cosmost.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.cosmost.project.cosmost.exception.CourseIdNotfound;
 import com.cosmost.project.cosmost.infrastructure.entity.*;
 import com.cosmost.project.cosmost.infrastructure.repository.*;
@@ -16,13 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.data.domain.PageRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -467,14 +464,29 @@ public class CosmostsServiceImpl implements CosmostsService {
     public List<ReadCourseResponse> readCourseByKeyword(String keyword, String category, Long nameId, Pageable pageable) {
         Slice<Long> searchCourseIdSlice = hashtagEntityRepository.searchCourseId(keyword, pageable);
         List<ReadCourseResponse> courseList = new ArrayList<>();
+        List<CategoryListEntity> categoryLastPage = new ArrayList<>();
+
+        boolean checkLastPage = searchCourseIdSlice.isLast();
 
         for(int i=0; i<searchCourseIdSlice.getContent().size(); i++) {
 
             if (category.equals("location")) {
+                List<Long> searchCourseIdAndCategoryLastPage = hashtagEntityRepository.searchCourseIdAndCategoryLastPage(keyword, pageable);
+
+                for(int j=0; j<searchCourseIdSlice.getContent().size(); j++) {
+                    categoryLastPage = categoryListRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
+
+                    if(categoryLastPage.equals(searchCourseIdAndCategoryLastPage)) {
+                        break;
+                    }
+                }
+
                 List<CategoryListEntity> categoryListEntitySlice = categoryListRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
 
                 if(!categoryListEntitySlice.get(0).getLocationCategory().getId().equals(nameId)) {
                     continue;
+                } else if (categoryListEntitySlice.equals(categoryLastPage)) {
+                    checkLastPage = true;
                 }
             } else if (category.equals("theme")) {
                 List<CategoryListEntity> categoryListEntitySlice = categoryListRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
@@ -484,50 +496,50 @@ public class CosmostsServiceImpl implements CosmostsService {
                 }
             }
 
-                List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
-                List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
+            List<PlaceDetailEntity> placeDetailEntityList = placeDetailEntityRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
+            List<ReadPlaceDetailResponse> readPlaceDetailResponseList = new ArrayList<>();
 
-                List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
-                List<Hashtag> hashtagList = new ArrayList<>();
+            List<HashtagEntity> hashtagEntityList = hashtagEntityRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
+            List<Hashtag> hashtagList = new ArrayList<>();
 
-                List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(searchCourseIdSlice.getContent().get(i).longValue(), 0);
-                List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
+            List<PlaceImgEntity> placeImgEntityList = placeImgEntityRepository.findByCourse_IdAndAndPlaceImgOrder(searchCourseIdSlice.getContent().get(i).longValue(), 0);
+            List<ReadPlaceImgResponse> readPlaceImgResponseList = new ArrayList<>();
 
-                List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
-                List<CategoryList> categoryLists = new ArrayList<>();
+            List<CategoryListEntity> categoryListEntityList = categoryListRepository.findByCourse_Id(searchCourseIdSlice.getContent().get(i).longValue());
+            List<CategoryList> categoryLists = new ArrayList<>();
 
 
-                placeDetailEntityList.forEach(placeDetailEntity -> {
+            placeDetailEntityList.forEach(placeDetailEntity -> {
 
-                    readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
-                            .id(placeDetailEntity.getId())
-                            .placeName(placeDetailEntity.getPlaceName())
-                            .placeOrder(placeDetailEntity.getPlaceOrder())
-                            .build());
-                });
+                readPlaceDetailResponseList.add(ReadPlaceDetailResponse.builder()
+                        .id(placeDetailEntity.getId())
+                        .placeName(placeDetailEntity.getPlaceName())
+                        .placeOrder(placeDetailEntity.getPlaceOrder())
+                        .build());
+            });
 
-                hashtagEntityList.forEach(hashtagEntity -> {
-                    hashtagList.add(Hashtag.builder()
-                            .id(hashtagEntity.getId())
-                            .keyword(hashtagEntity.getKeyword())
-                            .build());
-                });
+            hashtagEntityList.forEach(hashtagEntity -> {
+                hashtagList.add(Hashtag.builder()
+                        .id(hashtagEntity.getId())
+                        .keyword(hashtagEntity.getKeyword())
+                        .build());
+            });
 
-                placeImgEntityList.forEach(placeImgEntity -> {
-                    readPlaceImgResponseList.add(ReadPlaceImgResponse.builder()
-                            .id(placeImgEntity.getId())
-                            .placeImgOrder(placeImgEntity.getPlaceImgOrder())
-                            .placeImgUrl(placeImgEntity.getPlaceImgUrl())
-                            .build());
-                });
+            placeImgEntityList.forEach(placeImgEntity -> {
+                readPlaceImgResponseList.add(ReadPlaceImgResponse.builder()
+                        .id(placeImgEntity.getId())
+                        .placeImgOrder(placeImgEntity.getPlaceImgOrder())
+                        .placeImgUrl(placeImgEntity.getPlaceImgUrl())
+                        .build());
+            });
 
-                categoryListEntityList.forEach(categoryListEntity -> {
-                    categoryLists.add(CategoryList.builder()
-                            .id(categoryListEntity.getId())
-                            .locationCategoryName(categoryListEntity.getLocationCategory().getLocationCategoryName())
-                            .themeCategoryName(categoryListEntity.getThemeCategory().getThemeCategoryName())
-                            .build());
-                });
+            categoryListEntityList.forEach(categoryListEntity -> {
+                categoryLists.add(CategoryList.builder()
+                        .id(categoryListEntity.getId())
+                        .locationCategoryName(categoryListEntity.getLocationCategory().getLocationCategoryName())
+                        .themeCategoryName(categoryListEntity.getThemeCategory().getThemeCategoryName())
+                        .build());
+            });
 
             courseList.add(ReadCourseResponse.builder()
                     .id(searchCourseIdSlice.getContent().get(i).longValue())
@@ -535,14 +547,14 @@ public class CosmostsServiceImpl implements CosmostsService {
                     .courseTitle(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getCourseTitle())
                     .courseStatus(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getCourseStatus())
                     .createAt(courseEntityRepository.findById(searchCourseIdSlice.getContent().get(i).longValue()).get().getCreateAt())
-                    .whetherLastPage(searchCourseIdSlice.isLast())
+                    .whetherLastPage(checkLastPage)
                     .readPlaceDetailResponseList(readPlaceDetailResponseList)
                     .hashtagList(hashtagList)
                     .readPlaceImgResponseList(readPlaceImgResponseList)
                     .categoryLists(categoryLists)
                     .build());
 
-            }
+        }
 
         return courseList;
     }

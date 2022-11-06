@@ -1,7 +1,6 @@
 package com.cosmost.project.cosmost.requestbody;
 
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
-import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
 import com.cosmost.project.cosmost.infrastructure.entity.PlaceImgEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

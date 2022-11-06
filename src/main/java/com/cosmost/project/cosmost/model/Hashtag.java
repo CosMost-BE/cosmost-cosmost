@@ -1,7 +1,6 @@
 package com.cosmost.project.cosmost.model;
 
 import com.cosmost.project.cosmost.infrastructure.entity.HashtagEntity;
-import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

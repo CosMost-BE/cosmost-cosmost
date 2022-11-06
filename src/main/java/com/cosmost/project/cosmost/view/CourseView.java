@@ -3,8 +3,6 @@ package com.cosmost.project.cosmost.view;
 import com.cosmost.project.cosmost.infrastructure.entity.CourseStatus;
 import com.cosmost.project.cosmost.model.Course;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 

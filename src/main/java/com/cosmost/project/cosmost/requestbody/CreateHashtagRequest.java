@@ -2,8 +2,6 @@ package com.cosmost.project.cosmost.requestbody;
 
 import com.cosmost.project.cosmost.infrastructure.entity.CourseEntity;
 import com.cosmost.project.cosmost.infrastructure.entity.HashtagEntity;
-import com.cosmost.project.cosmost.infrastructure.entity.PlaceDetailEntity;
-import com.cosmost.project.cosmost.model.Hashtag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
