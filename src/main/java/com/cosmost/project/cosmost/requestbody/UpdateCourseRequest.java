@@ -29,7 +29,7 @@ public class UpdateCourseRequest {
     private CourseStatus courseStatus;
 
     @Valid
-    private List<CreatePlaceDetailRequest> createPlaceDetailRequestList;
+    private List<CreatePlaceDetailRequest>  createPlaceDetailRequestList;
 
     @Valid
     private List<CreateHashtagRequest> createHashtagRequestList;

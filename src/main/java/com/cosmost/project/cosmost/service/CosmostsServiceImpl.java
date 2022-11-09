@@ -164,7 +164,7 @@ public class CosmostsServiceImpl implements CosmostsService {
                 hashtagEntityRepository.save(hashtagRequest.createDtoToEntity(hashtagRequest, courseEntity));
             }
 
-            if (!file.get(0).isEmpty()) {
+            if (file != null && !file.isEmpty() && !file.get(0).isEmpty()) {
                 List<FileInfoRequest> returnDto = new ArrayList<>();
 
                 for(CreatePlaceImgRequest placeImgRequest : updateCourseRequest.getCreatePlaceImgRequestList()) {
