@@ -73,8 +73,6 @@ public class CourseController {
                                         @RequestParam(value="sort", defaultValue = " ", required=false) String sort,
                                         Pageable pageable) {
 
-        System.out.println("#$%#$%#$%#$%#$"+hashtag);
-
         if(String.valueOf(filter).equals("auth")) { // 작성한 코스 목록 조회
             List<ReadCourseResponse> course = cosmostsService.readCourseByAuthId(pageable);
             return ResponseEntity.ok(course);
