@@ -56,12 +56,17 @@
 #### [BE Repo.](https://github.com/orgs/CosMost-BE/repositories)
 #### [FE Repo.](https://github.com/codingBear01/cosmost_fe)
 
-## Arcitectures
+## System Arcitecture
+![system_arcitecture](https://user-images.githubusercontent.com/95178119/201016512-614c23e3-c52c-4b1d-bb53-51a052d6c91c.png)
 
-## ER Diagram
+## [Event Storming](https://miro.com/app/board/uXjVPFaLcAM=/)
+![event_storming](https://user-images.githubusercontent.com/95178119/201017801-4484a489-5517-47cb-86c4-f1abea51d4c2.jpg)
 
-## Requirements Specification
+## [ER Diagram](https://www.erdcloud.com/d/aqxBCJLZKuoT5f75K)
+![erd](https://user-images.githubusercontent.com/95178119/201016522-dcaf6ba2-d66d-4d54-b566-68c885b90d2c.png)
 
-## API Definition
+## [Requirements Specification](https://applebanana.atlassian.net/wiki/spaces/~6029c153c5a0430067bd79ce/pages/edit-v2/11370497?draftShareId=d8554bdb-9740-4c97-95ad-378816943069)
+
+## [API Definition](https://docs.google.com/spreadsheets/d/1QWuBOwt4fPZEXaZ5XQ0yQyrJvEPdpJuf/edit?rtpof=true#gid=990061567)
 
 ## 시현 영상
