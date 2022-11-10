@@ -80,8 +80,8 @@
 |BE|김승후 </br>[@shockim3710](https://github.com/shockim3710)| - 팀장 및 백엔드 총괄 </br> - [Cosmost 서비스](https://github.com/CosMost-BE/cosmost-cosmost) API 설계 </br> - 메인 및 검색페이지 API 설계 </br> - [게이트웨이](https://github.com/CosMost-BE/cosmost-gateway) 설정 </br> - AWS S3 이미지 업로드 설정 </br> - 발표 및 PPT 제작 </br> - 서비스 설계 및 문서 작업 </br>|
 |BE|홍찬영 </br>[@ChanYoungHong](https://github.com/ChanYoungHong)|- [Comment 서비스](https://github.com/CosMost-BE/cosmost-comment) API 설계 </br> - [Popularity 서비스](https://github.com/CosMost-BE/cosmost-popularity) API 설계 </br> - [Board 서비스](https://github.com/CosMost-BE/cosmost-board) API 설계 </br> - 크롤링으로 더미데이터 생성 </br> - 서비스 설계 및 문서 작업 </br>|
 |BE|권재현 </br>[@K-J-HYEON](https://github.com/K-J-HYEON)|- [Auth 서비스](https://github.com/CosMost-BE/cosmost-auth) API 설계 </br> - elastiCache 및 Amazon Linux2 Redis 활용 이메일 인증 </br> - JWT & Spring Security 활용 사용자 인증 기능 </br> - 서비스 설계 및 문서 작업 </br>|
-|FE|강명모 </br>[@codingBear01](https://github.com/codingBear01)|- UI/UX 기획 및 디자인 퍼블리싱 </br> - 팔로우, 좋아요, 신고, 코스 리뷰, 평점, 회원 관련 API 및 UI </br> - 발표 </br> - 서비스 설계 </br>|
-|FE|최영수 </br>[@InvincibleGaren](https://github.com/InvincibleGaren)|- 퍼블리싱 </br>  - 코스, 회원 API 및 기능 </br> - 네이버 지도 OPEN API </br> - 서비스 설계 </br>|
+|FE|강명모 </br>[@codingBear01](https://github.com/codingBear01)|- UI/UX 기획 및 디자인 </br> - 퍼블리싱 </br> - Auth, Comment, Board, Popularity API 및 UI </br> - React Component 구조 설계 </br> - 서비스 설계|
+|FE|최영수 </br>[@InvincibleGaren](https://github.com/InvincibleGaren)|- 퍼블리싱 </br>  - Auth, Cosmost API </br> - 이미지 업로드 및 수정 기능 </br> - 네이버 지도 OPEN API </br> - 서비스 설계 </br>|
  
   
   
