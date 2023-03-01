@@ -1,17 +1,17 @@
 
 # cosMost - 팀 NiceCream (백엔드)
-> ### [공유하세요 당신만의 코스를 바로 지금](https://cosmost.vercel.app/)
- 
-  
-  
-  
-  
+![image](https://user-images.githubusercontent.com/60650967/221760047-8f265c4a-a413-44ba-a4c1-7917f1a13ffe.png)
+
+   
 　  
 ## Description
 > 스파로스 아카데미 1기 2차 기업연계 프로젝트
 
 > 2022.09.13. ~ 2022.11.11.
- 
+
+> [사이트 미리보기](https://cosmost.vercel.app/) 
+
+> [팀 소개 및 프로젝트 규칙 : Notion](https://pine-vicuna-b24.notion.site/CosMost-005ac4d51b0b491ab1c430746680c732)
   
   
   
@@ -66,7 +66,7 @@
 | 언어 | Java (JDK 11.0.15) </br>JavaScript |
 | IDE | Intellij IDEA </br>Visual Studio Code |
 | 협업 도구 | GitHub, Notion |
-
+| Build | Gradle |
  
   
   
@@ -113,7 +113,7 @@
   
   
 　  
-## [ER Diagram](https://www.erdcloud.com/d/aqxBCJLZKuoT5f75K)
+## [ER Diagram](https://www.erdcloud.com/d/AKvSPbLnpGbdeWPYa)
 ![erd](https://user-images.githubusercontent.com/95178119/201016522-dcaf6ba2-d66d-4d54-b566-68c885b90d2c.png)
  
   
@@ -122,17 +122,22 @@
   
 　  
 ## [Requirements Specification](https://applebanana.atlassian.net/wiki/spaces/~6029c153c5a0430067bd79ce/pages/edit-v2/11370497?draftShareId=d8554bdb-9740-4c97-95ad-378816943069)
- 
+ ![Requirements Specification](https://user-images.githubusercontent.com/60650967/221733084-c4a1b7b5-8807-43da-9482-b404e8b5d627.JPG)
+
+
   
   
   
   
 　  
 ## [API Definition](https://docs.google.com/spreadsheets/d/1QWuBOwt4fPZEXaZ5XQ0yQyrJvEPdpJuf/edit?rtpof=true#gid=990061567)
- 
+ ![API Definition](https://user-images.githubusercontent.com/60650967/221732713-7104d13d-8ee5-4659-9fa0-e189db562777.jpg)
+
   
   
   
   
 　  
 ## 시현 영상
+<img width="80%" src= "https://user-images.githubusercontent.com/77037051/201515396-72cd59b9-59bc-4104-bbb3-3fb10d7fbcf8.mp4"/>
+
